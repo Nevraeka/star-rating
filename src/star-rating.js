@@ -1,10 +1,9 @@
-import exists, * as utils from "./mixins";
+import exists from "./mixins";
 
 export class StarRating extends HTMLElement {
 
     createdCallback(){
         Object.defineProperty(this, "value", { value: 0, writable: true });
-        utils.getCSS('star-rating.css');
     }
 
     attributeChangedCallback(name, oldVal, newVal) {
@@ -96,7 +95,7 @@ export class StarRating extends HTMLElement {
     }
 
     static template(color, size) {
-        return `<svg tabindex="0" class="star" fill="${color}" height="${size}" viewBox="0 0 ${size} ${size}" width="${size}" xmlns="http://www.w3.org/2000/svg">
+        return `<svg tabindex="0" style="outline: 0;cursor: pointer;" class="star" fill="${color}" height="${size}" viewBox="0 0 ${size} ${size}" width="${size}" xmlns="http://www.w3.org/2000/svg">
                     <path d="M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z"/>
                     <path d="M0 0h18v18H0z" fill="none"/>
                 </svg>`;

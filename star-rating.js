@@ -55,9 +55,9 @@
 	
 	var _mixins = __webpack_require__(1);
 	
-	var utils = _interopRequireWildcard(_mixins);
+	var _mixins2 = _interopRequireDefault(_mixins);
 	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -78,12 +78,11 @@
 	        key: "createdCallback",
 	        value: function createdCallback() {
 	            Object.defineProperty(this, "value", { value: 0, writable: true });
-	            utils.getCSS('star-rating.css');
 	        }
 	    }, {
 	        key: "attributeChangedCallback",
 	        value: function attributeChangedCallback(name, oldVal, newVal) {
-	            if ((0, utils.default)(oldVal)) {
+	            if ((0, _mixins2.default)(oldVal)) {
 	                if (name === "colors" || name === "size" || name === "maxvalue") {
 	                    this.render();
 	                }
@@ -165,23 +164,23 @@
 	        key: "getMaxValue",
 	        value: function getMaxValue() {
 	            var maxValue = parseInt(this.getAttribute('maxValue'), 10);
-	            return (0, utils.default)(maxValue) && !isNaN(maxValue) ? maxValue : 5;
+	            return (0, _mixins2.default)(maxValue) && !isNaN(maxValue) ? maxValue : 5;
 	        }
 	    }, {
 	        key: "getColors",
 	        value: function getColors() {
-	            return (0, utils.default)(this.getAttribute("colors")) ? this.getAttribute("colors").split(/(\s*)(,{1})(\s*)/) : ["#CCCCCC", "#F1C40F"];
+	            return (0, _mixins2.default)(this.getAttribute("colors")) ? this.getAttribute("colors").split(/(\s*)(,{1})(\s*)/) : ["#CCCCCC", "#F1C40F"];
 	        }
 	    }, {
 	        key: "getSize",
 	        value: function getSize() {
 	            var sizeAttr = parseInt(this.getAttribute('size'), 10);
-	            return (0, utils.default)(sizeAttr) && !isNaN(sizeAttr) ? sizeAttr : 18;
+	            return (0, _mixins2.default)(sizeAttr) && !isNaN(sizeAttr) ? sizeAttr : 18;
 	        }
 	    }], [{
 	        key: "template",
 	        value: function template(color, size) {
-	            return "<svg tabindex=\"0\" class=\"star\" fill=\"" + color + "\" height=\"" + size + "\" viewBox=\"0 0 " + size + " " + size + "\" width=\"" + size + "\" xmlns=\"http://www.w3.org/2000/svg\">\n                    <path d=\"M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z\"/>\n                    <path d=\"M0 0h18v18H0z\" fill=\"none\"/>\n                </svg>";
+	            return "<svg tabindex=\"0\" style=\"outline: 0;cursor: pointer;\" class=\"star\" fill=\"" + color + "\" height=\"" + size + "\" viewBox=\"0 0 " + size + " " + size + "\" width=\"" + size + "\" xmlns=\"http://www.w3.org/2000/svg\">\n                    <path d=\"M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z\"/>\n                    <path d=\"M0 0h18v18H0z\" fill=\"none\"/>\n                </svg>";
 	        }
 	    }, {
 	        key: "mapTemplates",

@@ -1,0 +1,24 @@
+{
+  "name": "star-rating",
+  "version": "1.0.0",
+  "description": "A Star ratings custom element",
+  "scripts": {
+    "watch": "webpack --watch"
+  },
+  "keywords": [
+    "web-components"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nevraeka/star-rating.git"
+  },
+  "author": "Erik Isaksen <nevraeka@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Nevraeka/star-rating/issues"
+  },
+  "homepage": "https://github.com/Nevraeka/star-rating#readme",
+  "dependencies": {
+    "webcomponents.js": "^0.7.21"
+  }
+}

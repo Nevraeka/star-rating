@@ -1,9 +1,10 @@
-import exists from "./mixins";
+import exists, * as utils from "./mixins";
 
 export class StarRating extends HTMLElement {
 
     createdCallback(){
         Object.defineProperty(this, "value", { value: 0, writable: true });
+        utils.getCSS('star-rating.css');
     }
 
     attributeChangedCallback(name, oldVal, newVal) {
@@ -36,13 +37,30 @@ export class StarRating extends HTMLElement {
         [].forEach.call(this.querySelectorAll('.star'), function(item, indx){
             let clickHandler = function(evt){
                 evt.preventDefault();
-                this.setAttribute("value", (indx + 1));
+                this.setValue(indx + 1);
+                this.updateStarColor(evt.target, indx)
                 this.dispatchRatingUpdated();
             };
 
             item.addEventListener('click', clickHandler.bind(this));
 
         }, this);
+    }
+
+    updateStarColor(star, index){
+        let colors = this.getColors();
+        let normalColor = colors[0];
+        let selectedColor = colors[1];
+        [].forEach.call(this.querySelectorAll('.star'), function(item, indx){
+            let color = indx <= index ? selectedColor : normalColor;
+            item.setAttribute('fill', color);
+        }, this);
+    }
+
+    setValue(val){
+        this.setAttribute("value", val);
+        this.value = val;
+        return this.value;
     }
 
     blueprint() {
@@ -78,7 +96,7 @@ export class StarRating extends HTMLElement {
     }
 
     static template(color, size) {
-        return `<svg tabindex="0" fill="${color}" height="${size}" viewBox="0 0 ${size} ${size}" width="${size}" xmlns="http://www.w3.org/2000/svg">
+        return `<svg tabindex="0" class="star" fill="${color}" height="${size}" viewBox="0 0 ${size} ${size}" width="${size}" xmlns="http://www.w3.org/2000/svg">
                     <path d="M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z"/>
                     <path d="M0 0h18v18H0z" fill="none"/>
                 </svg>`;

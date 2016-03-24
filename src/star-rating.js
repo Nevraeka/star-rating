@@ -9,7 +9,9 @@ export class StarRating extends HTMLElement {
     attributeChangedCallback(name, oldVal, newVal) {
         if(exists(oldVal)){
             if(name === "colors" || name === "size" || name === "maxvalue"){
+                this.blueprint();
                 this.render();
+                this.bindEvents();
             }
         }
 
@@ -37,22 +39,22 @@ export class StarRating extends HTMLElement {
             let clickHandler = function(evt){
                 evt.preventDefault();
                 this.setValue(indx + 1);
-                this.updateStarColor(evt.target, indx)
+                this.updateStar(evt.target, indx);
                 this.dispatchRatingUpdated();
             };
-
+            item.removeEventListener('click', clickHandler.bind(this));
             item.addEventListener('click', clickHandler.bind(this));
 
         }, this);
     }
 
-    updateStarColor(star, index){
-        let colors = this.getColors();
-        let normalColor = colors[0];
-        let selectedColor = colors[1];
+    updateStar(star, index){
         [].forEach.call(this.querySelectorAll('.star'), function(item, indx){
-            let color = indx <= index ? selectedColor : normalColor;
-            item.setAttribute('fill', color);
+            if (indx <= index) {
+                item.classList.add('star-selected');
+            } else {
+                item.classList.remove('star-selected');
+            }
         }, this);
     }
 
@@ -68,7 +70,7 @@ export class StarRating extends HTMLElement {
 
     render(){
         var count = this.getMaxValue();
-        this.innerHTML = "";
+        this.innerHTML = StarRating.css(this.getPaths(), this.getSize());
         while(count > 0){
             this.renderTemplate();
             count--;
@@ -78,6 +80,10 @@ export class StarRating extends HTMLElement {
     renderTemplate(){
         let tmpl = this.starTemplates[0];
         this.innerHTML+= tmpl;
+    }
+
+    getPaths(){
+        return exists(this.getAttribute('paths')) ? this.getAttribute('paths').split(/(\s*)(,{1})(\s*)/)  : [ 'star.svg', 'star-selected.svg' ];
     }
 
     getMaxValue(){
@@ -90,19 +96,38 @@ export class StarRating extends HTMLElement {
     }
 
     getSize() {
-        let sizeAttr = parseInt(this.getAttribute('size'), 10);
-        return exists(sizeAttr) && !isNaN(sizeAttr) ? sizeAttr : 18;
+        let sizeAttr = this.getAttribute('size');
+        return exists(sizeAttr) ? sizeAttr : "36px";
     }
 
-    static template(color, size) {
-        return `<svg tabindex="0" style="outline: 0;cursor: pointer;" class="star" fill="${color}" height="${size}" viewBox="0 0 ${size} ${size}" width="${size}" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z"/>
-                    <path d="M0 0h18v18H0z" fill="none"/>
-                </svg>`;
+    static template(color, size, maxvalue) {
+        return `<div class="star"></div>`;
     }
 
     static mapTemplates(color){
         return StarRating.template(color, this.getSize());
+    }
+
+    static css(path, size){
+        return   `<style>
+                    :host,
+                    star-rating {
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      width: 100%;
+                    }
+                    .star {
+                       width: ${size};
+                       height: ${size};
+                       background: rgba(255,255,255,0) url(${path[0]}) no-repeat center center;
+                       background-size: cover;
+                    }
+
+                    .star-selected {
+                       background-image: url(${path[1]});
+                    }
+                </style>`;
     }
 
 }

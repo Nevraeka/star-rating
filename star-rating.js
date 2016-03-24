@@ -84,7 +84,9 @@
 	        value: function attributeChangedCallback(name, oldVal, newVal) {
 	            if ((0, _mixins2.default)(oldVal)) {
 	                if (name === "colors" || name === "size" || name === "maxvalue") {
+	                    this.blueprint();
 	                    this.render();
+	                    this.bindEvents();
 	                }
 	            }
 	        }
@@ -114,22 +116,22 @@
 	                var clickHandler = function clickHandler(evt) {
 	                    evt.preventDefault();
 	                    this.setValue(indx + 1);
-	                    this.updateStarColor(evt.target, indx);
+	                    this.updateStar(evt.target, indx);
 	                    this.dispatchRatingUpdated();
 	                };
-	
+	                item.removeEventListener('click', clickHandler.bind(this));
 	                item.addEventListener('click', clickHandler.bind(this));
 	            }, this);
 	        }
 	    }, {
-	        key: "updateStarColor",
-	        value: function updateStarColor(star, index) {
-	            var colors = this.getColors();
-	            var normalColor = colors[0];
-	            var selectedColor = colors[1];
+	        key: "updateStar",
+	        value: function updateStar(star, index) {
 	            [].forEach.call(this.querySelectorAll('.star'), function (item, indx) {
-	                var color = indx <= index ? selectedColor : normalColor;
-	                item.setAttribute('fill', color);
+	                if (indx <= index) {
+	                    item.classList.add('star-selected');
+	                } else {
+	                    item.classList.remove('star-selected');
+	                }
 	            }, this);
 	        }
 	    }, {
@@ -148,7 +150,7 @@
 	        key: "render",
 	        value: function render() {
 	            var count = this.getMaxValue();
-	            this.innerHTML = "";
+	            this.innerHTML = StarRating.css(this.getPaths(), this.getSize());
 	            while (count > 0) {
 	                this.renderTemplate();
 	                count--;
@@ -159,6 +161,11 @@
 	        value: function renderTemplate() {
 	            var tmpl = this.starTemplates[0];
 	            this.innerHTML += tmpl;
+	        }
+	    }, {
+	        key: "getPaths",
+	        value: function getPaths() {
+	            return (0, _mixins2.default)(this.getAttribute('paths')) ? this.getAttribute('paths').split(/(\s*)(,{1})(\s*)/) : ['star.svg', 'star-selected.svg'];
 	        }
 	    }, {
 	        key: "getMaxValue",
@@ -174,18 +181,23 @@
 	    }, {
 	        key: "getSize",
 	        value: function getSize() {
-	            var sizeAttr = parseInt(this.getAttribute('size'), 10);
-	            return (0, _mixins2.default)(sizeAttr) && !isNaN(sizeAttr) ? sizeAttr : 18;
+	            var sizeAttr = this.getAttribute('size');
+	            return (0, _mixins2.default)(sizeAttr) ? sizeAttr : "36px";
 	        }
 	    }], [{
 	        key: "template",
-	        value: function template(color, size) {
-	            return "<svg tabindex=\"0\" style=\"outline: 0;cursor: pointer;\" class=\"star\" fill=\"" + color + "\" height=\"" + size + "\" viewBox=\"0 0 " + size + " " + size + "\" width=\"" + size + "\" xmlns=\"http://www.w3.org/2000/svg\">\n                    <path d=\"M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z\"/>\n                    <path d=\"M0 0h18v18H0z\" fill=\"none\"/>\n                </svg>";
+	        value: function template(color, size, maxvalue) {
+	            return "<div class=\"star\"></div>";
 	        }
 	    }, {
 	        key: "mapTemplates",
 	        value: function mapTemplates(color) {
 	            return StarRating.template(color, this.getSize());
+	        }
+	    }, {
+	        key: "css",
+	        value: function css(path, size) {
+	            return "<style>\n                    :host,\n                    star-rating {\n                      display: flex;\n                      align-items: center;\n                      justify-content: center;\n                      width: 100%;\n                    }\n                    .star {\n                       width: " + size + ";\n                       height: " + size + ";\n                       background: rgba(255,255,255,0) url(" + path[0] + ") no-repeat center center;\n                       background-size: cover;\n                    }\n\n                    .star-selected {\n                       background-image: url(" + path[1] + ");\n                    }\n                </style>";
 	        }
 	    }]);
 	

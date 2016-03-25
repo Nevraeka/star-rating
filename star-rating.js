@@ -77,12 +77,13 @@
 	    _createClass(StarRating, [{
 	        key: "createdCallback",
 	        value: function createdCallback() {
+	            this._shadow = this.createShadowRoot();
 	            Object.defineProperty(this, "value", { value: 0, writable: true });
 	        }
 	    }, {
 	        key: "attributeChangedCallback",
 	        value: function attributeChangedCallback(name, oldVal, newVal) {
-	            if (name === "size" || name === "maxvalue" || name === "hover") {
+	            if (name === "size" || name === "maxvalue" || name === "hover" || name === "paths") {
 	                this._update();
 	            }
 	        }
@@ -94,7 +95,7 @@
 	    }, {
 	        key: "reset",
 	        value: function reset() {
-	            [].forEach.call(this.querySelectorAll('.star'), removedSelectedState, this);
+	            [].forEach.call(this._shadow.querySelectorAll('.star'), removedSelectedState, this);
 	
 	            function removedSelectedState(item, indx) {
 	                item.classList.remove('star-selected');
@@ -112,7 +113,9 @@
 	        key: "_render",
 	        value: function _render() {
 	            var count = this._getMaxValue();
-	            this.innerHTML = StarRating._css(this._getPaths(), this._getSize());
+	            var _paths = this._getPaths();
+	            console.log(_paths, _paths[0], _paths[1]);
+	            this._shadow.innerHTML = StarRating._css(_paths[0], _paths[1], this._getSize());
 	            while (count > 0) {
 	                this._addStar();
 	                count--;
@@ -131,7 +134,7 @@
 	    }, {
 	        key: "_bindEvents",
 	        value: function _bindEvents() {
-	            [].forEach.call(this.querySelectorAll('.star'), iterateOverStars, this);
+	            [].forEach.call(this._shadow.querySelectorAll('.star'), iterateOverStars, this);
 	
 	            function iterateOverStars(item, indx) {
 	                if (this.getAttribute('hover') === 'true') {
@@ -155,12 +158,12 @@
 	    }, {
 	        key: "_addStar",
 	        value: function _addStar() {
-	            this.innerHTML += '<div class="star"></div>';
+	            this._shadow.innerHTML += '<div class="star"></div>';
 	        }
 	    }, {
 	        key: "_toggleStates",
 	        value: function _toggleStates(star, index) {
-	            [].forEach.call(this.querySelectorAll('.star'), toggleStates, this);
+	            [].forEach.call(this._shadow.querySelectorAll('.star'), toggleStates, this);
 	
 	            function toggleStates(item, indx) {
 	                item.classList[indx <= index ? 'add' : 'remove']('star-selected');
@@ -169,7 +172,8 @@
 	    }, {
 	        key: "_getPaths",
 	        value: function _getPaths() {
-	            return (0, _mixins2.default)(this.getAttribute('paths')) ? this.getAttribute('paths').split(/(\s*)(,{1})(\s*)/) : ['star.svg', 'star-selected.svg'];
+	            var _paths = this.getAttribute('paths');
+	            return (0, _mixins2.default)(_paths) ? _paths.split(',') : ['data:image/svg+xml,%3Csvg%20fill%3D%22%23CCCCCC%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%20width%3D%2218%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M9%2011.3l3.71%202.7-1.42-4.36L15%207h-4.55L9%202.5%207.55%207H3l3.71%202.64L5.29%2014z%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h18v18H0z%22%20fill%3D%22none%22/%3E%0A%3C/svg%3E', 'data:image/svg+xml,%3Csvg%20fill%3D%22%23F1C40F%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%20width%3D%2218%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M9%2011.3l3.71%202.7-1.42-4.36L15%207h-4.55L9%202.5%207.55%207H3l3.71%202.64L5.29%2014z%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h18v18H0z%22%20fill%3D%22none%22/%3E%0A%3C/svg%3E'];
 	        }
 	    }, {
 	        key: "_getMaxValue",
@@ -192,8 +196,9 @@
 	        }
 	    }], [{
 	        key: "_css",
-	        value: function _css(path, size) {
-	            return "<style>\n                    :host,\n                    star-rating {\n                      display: flex;\n                      align-items: center;\n                      justify-content: center;\n                      width: 100%;\n                    }\n                    .star {\n                       width: " + size + ";\n                       height: " + size + ";\n                       background: rgba(255,255,255,0) url(" + path[0] + ") no-repeat center center;\n                       background-size: cover;\n                    }\n\n                    .star-selected {\n                       background-image: url(" + path[1] + ");\n                    }\n                </style>";
+	        value: function _css(path, overPath, size) {
+	            console.log(path, overPath, size);
+	            return "<style>\n                    :host {\n                      display: flex;\n                      align-items: center;\n                      justify-content: center;\n                      width: 100%;\n                    }\n\n                    .star {\n                       width: " + size + ";\n                       height: " + size + ";\n                       background: rgba(255,255,255,0) url(" + path + ") no-repeat center center;\n                       background-size: cover;\n                    }\n\n                    .star-selected {\n                       background-image: url(" + overPath + ");\n                    }\n                </style>";
 	        }
 	    }]);
 	

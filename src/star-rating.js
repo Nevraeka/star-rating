@@ -3,11 +3,12 @@ import exists from "./mixins";
 export class StarRating extends HTMLElement {
 
     createdCallback(){
+        this._shadow = this.createShadowRoot();
         Object.defineProperty(this, "value", { value: 0, writable: true });
     }
 
     attributeChangedCallback(name, oldVal, newVal) {
-        if(name === "size" || name === "maxvalue" || name === "hover"){
+        if(name === "size" || name === "maxvalue" || name === "hover" || name === "img-paths"){
             this._update();
         }
     }
@@ -17,7 +18,7 @@ export class StarRating extends HTMLElement {
     }
 
     reset(){
-        [].forEach.call(this.querySelectorAll('.star'), removedSelectedState, this);
+        [].forEach.call(this._shadow.querySelectorAll('.star'), removedSelectedState, this);
 
         function removedSelectedState(item, indx){
             item.classList.remove('star-selected');
@@ -33,7 +34,8 @@ export class StarRating extends HTMLElement {
 
     _render(){
         var count = this._getMaxValue();
-        this.innerHTML = StarRating._css(this._getPaths(), this._getSize());
+        let _paths = this._getPaths();
+        this._shadow.innerHTML = StarRating._css(_paths[0], _paths[1], this._getSize());
         while(count > 0){
             this._addStar();
             count--;
@@ -50,7 +52,7 @@ export class StarRating extends HTMLElement {
     }
 
     _bindEvents(){
-        [].forEach.call(this.querySelectorAll('.star'), iterateOverStars, this);
+        [].forEach.call(this._shadow.querySelectorAll('.star'), iterateOverStars, this);
 
         function iterateOverStars(item, indx){
             if(this.getAttribute('hover') === 'true') {
@@ -74,11 +76,11 @@ export class StarRating extends HTMLElement {
     }
 
     _addStar(){
-        this.innerHTML += '<div class="star"></div>';
+        this._shadow.innerHTML += '<div class="star"></div>';
     }
 
     _toggleStates(star, index){
-        [].forEach.call(this.querySelectorAll('.star'), toggleStates, this);
+        [].forEach.call(this._shadow.querySelectorAll('.star'), toggleStates, this);
 
         function toggleStates(item, indx){
             item.classList[indx <= index ? 'add' : 'remove']('star-selected');
@@ -86,7 +88,8 @@ export class StarRating extends HTMLElement {
     }
 
     _getPaths(){
-        return exists(this.getAttribute('paths')) ? this.getAttribute('paths').split(/(\s*)(,{1})(\s*)/)  : [ 'star.svg', 'star-selected.svg' ];
+        let _paths = this.getAttribute('img-paths');
+        return exists(_paths) ? _paths.split(',')  : [ 'data:image/svg+xml,%3Csvg%20fill%3D%22%23CCCCCC%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%20width%3D%2218%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M9%2011.3l3.71%202.7-1.42-4.36L15%207h-4.55L9%202.5%207.55%207H3l3.71%202.64L5.29%2014z%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h18v18H0z%22%20fill%3D%22none%22/%3E%0A%3C/svg%3E', 'data:image/svg+xml,%3Csvg%20fill%3D%22%23F1C40F%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%20width%3D%2218%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M9%2011.3l3.71%202.7-1.42-4.36L15%207h-4.55L9%202.5%207.55%207H3l3.71%202.64L5.29%2014z%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h18v18H0z%22%20fill%3D%22none%22/%3E%0A%3C/svg%3E' ];
     }
 
     _getMaxValue(){
@@ -105,24 +108,25 @@ export class StarRating extends HTMLElement {
         return this.value;
     }
 
-    static _css(path, size){
+    static _css(path, overPath, size){
+        console.log(path, overPath, size);
         return `<style>
-                    :host,
-                    star-rating {
+                    :host {
                       display: flex;
                       align-items: center;
                       justify-content: center;
                       width: 100%;
                     }
+
                     .star {
                        width: ${size};
                        height: ${size};
-                       background: rgba(255,255,255,0) url(${path[0]}) no-repeat center center;
+                       background: rgba(255,255,255,0) url(${path}) no-repeat center center;
                        background-size: cover;
                     }
 
                     .star-selected {
-                       background-image: url(${path[1]});
+                       background-image: url(${overPath});
                     }
                 </style>`;
     }

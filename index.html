@@ -7,6 +7,53 @@
     <script src="star-rating.js"></script>
 </head>
 <body>
+<h2>Examples</h2>
+<section>
+    <h3>Basic Usage</h3>
+    <p>This example uses default values</p>
     <star-rating maxvalue="5"></star-rating>
+    <hr>
+    <h3>Hover Usage</h3>
+    <p>hover example</p>
+    <star-rating maxvalue="5" hover="true"></star-rating>
+    <hr>
+    <!--<h3>Reset Example</h3>-->
+    <!--<star-rating maxvalue="5" hover="true"></star-rating>-->
+    <!--<hr>-->
+    <!--<h3>Custom Image Example</h3>-->
+    <!--<star-rating maxvalue="5" hover="true"></star-rating>-->
+    <!--<hr>-->
+    <!--<h3>Updated maxvalue Example</h3>-->
+    <!--<star-rating maxvalue="5" hover="true"></star-rating>-->
+    <!--<hr>-->
+    <!--<h3>ratingUpdated Event watching example</h3>-->
+    <!--<star-rating maxvalue="5" hover="true"></star-rating>-->
+    <!--<hr>-->
+</section>
+<section>
+    <h2>Events</h2>
+    <h3>ratingUpdated</h3>
+    <p>rating updated is a DOM Custom Event that fires whenever the value of the &lt;star-rating&gt; is updated. This event passes a JavaScript object with 2 key/value pairs to 'event.detail'.</p>
+    <h4>Event Detail data</h4>
+    <p><strong>maxValue</strong> - this is the current maxvalue attribute value at the time the event fires</p>
+    <p><strong>value</strong> - this is the current value property/attribute value at the time the event fires</p>
+</section>
+     <section>
+         <h2>Attributes</h2>
+         <h3>value</h3>
+         <p>value is mapped directly to the value property & is meant to be a 'output only' attribute. This means it is internally managed by the element and should be considered 'read-only' </p>
+     </section>
+    <section>
+        <h2>Properties</h2>
+        <h3>value</h3>
+        <p>value represents the number of stars currently selected. Value directly maps to the value attribute (see above).</p>
+    </section>
+
+    <section>
+        <h2>Methods</h2>
+        <h3>reset</h3>
+        <p>this method resets the value of the &lt;star-rating&gt; element to 0 and triggers the ratingUpdated event.</p>
+    </section>
+
 </body>
 </html>

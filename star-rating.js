@@ -82,121 +82,117 @@
 	    }, {
 	        key: "attributeChangedCallback",
 	        value: function attributeChangedCallback(name, oldVal, newVal) {
-	            if ((0, _mixins2.default)(oldVal)) {
-	                if (name === "colors" || name === "size" || name === "maxvalue") {
-	                    this.blueprint();
-	                    this.render();
-	                    this.bindEvents();
-	                }
+	            if (name === "size" || name === "maxvalue" || name === "hover") {
+	                this._update();
 	            }
 	        }
 	    }, {
 	        key: "attachedCallback",
 	        value: function attachedCallback() {
-	            this.blueprint();
-	            this.render();
-	            this.bindEvents();
+	            this._update();
 	        }
 	    }, {
-	        key: "dispatchRatingUpdated",
-	        value: function dispatchRatingUpdated() {
-	            var ratingUpated = new CustomEvent("ratingUpdated", {
-	                detail: {
-	                    value: this.value,
-	                    maxValue: this.getMaxValue()
-	                }
-	            });
+	        key: "reset",
+	        value: function reset() {
+	            [].forEach.call(this.querySelectorAll('.star'), removedSelectedState, this);
 	
-	            this.dispatchEvent(ratingUpated);
+	            function removedSelectedState(item, indx) {
+	                item.classList.remove('star-selected');
+	            }
+	            this._setValue(0);
+	            this.dispatchEvent(this._ratingUpdatedEvent());
 	        }
 	    }, {
-	        key: "bindEvents",
-	        value: function bindEvents() {
-	            [].forEach.call(this.querySelectorAll('.star'), function (item, indx) {
-	                var clickHandler = function clickHandler(evt) {
-	                    evt.preventDefault();
-	                    this.setValue(indx + 1);
-	                    this.updateStar(evt.target, indx);
-	                    this.dispatchRatingUpdated();
-	                };
-	                item.removeEventListener('click', clickHandler.bind(this));
-	                item.addEventListener('click', clickHandler.bind(this));
-	            }, this);
+	        key: "_update",
+	        value: function _update() {
+	            this._render();
+	            this._bindEvents();
 	        }
 	    }, {
-	        key: "updateStar",
-	        value: function updateStar(star, index) {
-	            [].forEach.call(this.querySelectorAll('.star'), function (item, indx) {
-	                if (indx <= index) {
-	                    item.classList.add('star-selected');
-	                } else {
-	                    item.classList.remove('star-selected');
-	                }
-	            }, this);
-	        }
-	    }, {
-	        key: "setValue",
-	        value: function setValue(val) {
-	            this.setAttribute("value", val);
-	            this.value = val;
-	            return this.value;
-	        }
-	    }, {
-	        key: "blueprint",
-	        value: function blueprint() {
-	            this.starTemplates = this.getColors().map(StarRating.mapTemplates.bind(this));
-	        }
-	    }, {
-	        key: "render",
-	        value: function render() {
-	            var count = this.getMaxValue();
-	            this.innerHTML = StarRating.css(this.getPaths(), this.getSize());
+	        key: "_render",
+	        value: function _render() {
+	            var count = this._getMaxValue();
+	            this.innerHTML = StarRating._css(this._getPaths(), this._getSize());
 	            while (count > 0) {
-	                this.renderTemplate();
+	                this._addStar();
 	                count--;
 	            }
 	        }
 	    }, {
-	        key: "renderTemplate",
-	        value: function renderTemplate() {
-	            var tmpl = this.starTemplates[0];
-	            this.innerHTML += tmpl;
+	        key: "_ratingUpdatedEvent",
+	        value: function _ratingUpdatedEvent() {
+	            return new CustomEvent("ratingUpdated", {
+	                detail: {
+	                    value: this.value,
+	                    maxValue: this._getMaxValue()
+	                }
+	            });
 	        }
 	    }, {
-	        key: "getPaths",
-	        value: function getPaths() {
+	        key: "_bindEvents",
+	        value: function _bindEvents() {
+	            [].forEach.call(this.querySelectorAll('.star'), iterateOverStars, this);
+	
+	            function iterateOverStars(item, indx) {
+	                if (this.getAttribute('hover') === 'true') {
+	                    updateEventHandlers(this, item, 'mouseover', starHandler);
+	                }
+	                updateEventHandlers(this, item, 'click', starHandler);
+	
+	                function starHandler(evt) {
+	                    evt.preventDefault();
+	                    this._setValue(indx + 1);
+	                    this._toggleStates(evt.target, indx);
+	                    this.dispatchEvent(this._ratingUpdatedEvent());
+	                }
+	            }
+	
+	            function updateEventHandlers(starRating, element, evt, handler) {
+	                element.removeEventListener(evt, handler.bind(starRating));
+	                element.addEventListener(evt, handler.bind(starRating));
+	            }
+	        }
+	    }, {
+	        key: "_addStar",
+	        value: function _addStar() {
+	            this.innerHTML += '<div class="star"></div>';
+	        }
+	    }, {
+	        key: "_toggleStates",
+	        value: function _toggleStates(star, index) {
+	            [].forEach.call(this.querySelectorAll('.star'), toggleStates, this);
+	
+	            function toggleStates(item, indx) {
+	                item.classList[indx <= index ? 'add' : 'remove']('star-selected');
+	            }
+	        }
+	    }, {
+	        key: "_getPaths",
+	        value: function _getPaths() {
 	            return (0, _mixins2.default)(this.getAttribute('paths')) ? this.getAttribute('paths').split(/(\s*)(,{1})(\s*)/) : ['star.svg', 'star-selected.svg'];
 	        }
 	    }, {
-	        key: "getMaxValue",
-	        value: function getMaxValue() {
+	        key: "_getMaxValue",
+	        value: function _getMaxValue() {
 	            var maxValue = parseInt(this.getAttribute('maxValue'), 10);
 	            return (0, _mixins2.default)(maxValue) && !isNaN(maxValue) ? maxValue : 5;
 	        }
 	    }, {
-	        key: "getColors",
-	        value: function getColors() {
-	            return (0, _mixins2.default)(this.getAttribute("colors")) ? this.getAttribute("colors").split(/(\s*)(,{1})(\s*)/) : ["#CCCCCC", "#F1C40F"];
-	        }
-	    }, {
-	        key: "getSize",
-	        value: function getSize() {
+	        key: "_getSize",
+	        value: function _getSize() {
 	            var sizeAttr = this.getAttribute('size');
 	            return (0, _mixins2.default)(sizeAttr) ? sizeAttr : "36px";
 	        }
+	    }, {
+	        key: "_setValue",
+	        value: function _setValue(val) {
+	            this.setAttribute("value", val);
+	            this.value = val;
+	            return this.value;
+	        }
 	    }], [{
-	        key: "template",
-	        value: function template(color, size, maxvalue) {
-	            return "<div class=\"star\"></div>";
-	        }
-	    }, {
-	        key: "mapTemplates",
-	        value: function mapTemplates(color) {
-	            return StarRating.template(color, this.getSize());
-	        }
-	    }, {
-	        key: "css",
-	        value: function css(path, size) {
+	        key: "_css",
+	        value: function _css(path, size) {
 	            return "<style>\n                    :host,\n                    star-rating {\n                      display: flex;\n                      align-items: center;\n                      justify-content: center;\n                      width: 100%;\n                    }\n                    .star {\n                       width: " + size + ";\n                       height: " + size + ";\n                       background: rgba(255,255,255,0) url(" + path[0] + ") no-repeat center center;\n                       background-size: cover;\n                    }\n\n                    .star-selected {\n                       background-image: url(" + path[1] + ");\n                    }\n                </style>";
 	        }
 	    }]);

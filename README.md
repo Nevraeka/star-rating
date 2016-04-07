@@ -30,7 +30,10 @@ Attributes
 
 Example
 =======
-Demo is Coming Soon
+### <star-rating> Demos
+
+##### Changing the image src attribute
+[![changing the image src attribute]()](http://codepen.io/Nevraeka/pen/qZpryV/)
 
 ````html
 

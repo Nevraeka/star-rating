@@ -13,27 +13,28 @@
     <p>This example uses default values</p>
     <star-rating maxvalue="5"></star-rating>
     <hr>
-    <h3>Hover Usage</h3>
-    <p>hover example</p>
-    <star-rating maxvalue="5" hover="true"></star-rating>
-    <hr>
+    <!--<h3>Hover Usage</h3>-->
+    <!--<p>hover example</p>-->
+    <!--<star-rating maxvalue="5" hover="true"></star-rating>-->
+    <!--<hr>-->
     <!--<h3>Reset Example</h3>-->
     <!--<star-rating maxvalue="5" hover="true"></star-rating>-->
     <!--<hr>-->
     <h3>Custom Image Example</h3>
-    <star-rating id="custom-event" paths="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/US-O7_insignia.svg/2000px-US-O7_insignia.svg.png, http://www.elm.org/wp-content/uploads/2014/05/gold-star.jpg" maxvalue="5"></star-rating>
+    <star-rating id="custom-event" maxvalue="5"></star-rating>
     <button id="custom-event-trigger" type="button">Update Images</button>
     <button id="custom-event-reset" type="button">Reset Example</button>
 
     <script>
         document.getElementById('custom-event-trigger').addEventListener('click', function(evt){
             evt.preventDefault();
-            document.querySelector('#custom-event').setAttribute('img-paths', 'star.svg, star-selected.svg');
+            document.querySelector('#custom-event').setAttribute('src', `https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/US-O7_insignia.svg/2000px-US-O7_insignia.svg.png, http://www.elm.org/wp-content/uploads/2014/05/gold-star.jpg`);
         });
         document.getElementById('custom-event-reset').addEventListener('click', function(evt){
             evt.preventDefault();
-            document.querySelector('#custom-event').reset();
-            document.querySelector('#custom-event').removeAttribute('paths');
+            var stars = document.querySelector('#custom-event');
+            stars.removeAttribute('src');
+            stars.reset()
         });
     </script>
     <hr>

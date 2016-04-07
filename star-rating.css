@@ -1,4 +1,22 @@
-star-rating .star {
+:host {
+    display: -webkit-flex;
+    dislay: flex;
+    -webkit-align-items: center;
+    -ms-align-items: center;
+    -moz-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    -ms-justify-content: center;
+    -moz-justify-content: center;
+    justify-content: center;
+    width: 100%;
+}
+
+:host .star {
+    width: 36px;
+    height: 36px;
     outline: 0;
     cursor: pointer;
+    background: rgba(255,255,255,0) none no-repeat center center;
+    background-size: cover;
 }

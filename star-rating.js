@@ -53,11 +53,9 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _mixins = __webpack_require__(1);
+	var _helpers = __webpack_require__(3);
 	
-	var _mixins2 = _interopRequireDefault(_mixins);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var _vars = __webpack_require__(2);
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -77,31 +75,55 @@
 	    _createClass(StarRating, [{
 	        key: "createdCallback",
 	        value: function createdCallback() {
-	            this._shadow = this.createShadowRoot();
+	            this._attrs = /(size|maxvalue|src)/i;
 	            Object.defineProperty(this, "value", { value: 0, writable: true });
 	        }
 	    }, {
 	        key: "attributeChangedCallback",
 	        value: function attributeChangedCallback(name, oldVal, newVal) {
-	            if (name === "size" || name === "maxvalue" || name === "hover" || name === "paths") {
+	            if (this._attrs.test(name)) {
 	                this._update();
+	                this._toggleStates(newVal || 0);
 	            }
 	        }
 	    }, {
 	        key: "attachedCallback",
 	        value: function attachedCallback() {
+	            this._root = this._hasShadow() ? this.createShadowRoot() : this;
 	            this._update();
 	        }
 	    }, {
 	        key: "reset",
 	        value: function reset() {
-	            [].forEach.call(this._shadow.querySelectorAll('.star'), removedSelectedState, this);
-	
-	            function removedSelectedState(item, indx) {
-	                item.classList.remove('star-selected');
+	            if (this.value !== 0) {
+	                this._setValue(0);
+	                this._querySelectorAllStars(removedSelectedState);
+	                this.dispatchEvent(this._ratingUpdatedEvent());
 	            }
-	            this._setValue(0);
-	            this.dispatchEvent(this._ratingUpdatedEvent());
+	
+	            function removedSelectedState(item) {
+	                item.classList.remove('selected');
+	                this._setStateFor(item, this._src()[0], this._size());
+	            }
+	
+	            return this;
+	        }
+	    }, {
+	        key: "rate",
+	        value: function rate(value) {
+	            this._setValue(value);
+	            this._toggleStates(value);
+	            return this;
+	        }
+	    }, {
+	        key: "_setStateFor",
+	        value: function _setStateFor(item, starImg, size) {
+	            if (!this._hasShadow()) {
+	                item.style.backgroundImage = "url(" + starImg + ")";
+	                item.style.width = size;
+	                item.style.height = size;
+	            }
+	            return item;
 	        }
 	    }, {
 	        key: "_update",
@@ -109,16 +131,30 @@
 	            this._render();
 	            this._bindEvents();
 	        }
+	
+	        // TODO: Update this & relate style attr adjustments to use Shadow DOM &
+	        // CSS Properties (doing this hack now to get browser support)
+	
+	    }, {
+	        key: "_renderStars",
+	        value: function _renderStars() {
+	            var starArr = [];
+	            var maxValue = this._maxValue();
+	            while (maxValue > 0) {
+	                starArr.push(maxValue);
+	                maxValue--;
+	            }
+	            return starArr.map(_helpers.starTemplate).join('');
+	        }
 	    }, {
 	        key: "_render",
 	        value: function _render() {
-	            var count = this._getMaxValue();
-	            var _paths = this._getPaths();
-	            console.log(_paths, _paths[0], _paths[1]);
-	            this._shadow.innerHTML = StarRating._css(_paths[0], _paths[1], this._getSize());
-	            while (count > 0) {
-	                this._addStar();
-	                count--;
+	            if (this._hasShadow()) {
+	                // console.log(CSSTemplate(this._size(), this._src()) + this._renderStars());
+	                this._root.innerHTML = (0, _helpers.elementTemplate)(this._size(), this._src()) + this._renderStars();
+	            } else {
+	                this.setAttribute('style', StarRating._style(this._size(), this._src()).element());
+	                this._root.innerHTML = this._renderStars();
 	            }
 	        }
 	    }, {
@@ -127,26 +163,34 @@
 	            return new CustomEvent("ratingUpdated", {
 	                detail: {
 	                    value: this.value,
-	                    maxValue: this._getMaxValue()
+	                    maxValue: this._maxValue()
 	                }
 	            });
 	        }
 	    }, {
+	        key: "_querySelectorAllStars",
+	        value: function _querySelectorAllStars(iterateFn) {
+	            var stars = this._root.querySelectorAll('.star');
+	            [].forEach.call(stars, iterateFn, this);
+	            return stars;
+	        }
+	    }, {
 	        key: "_bindEvents",
 	        value: function _bindEvents() {
-	            [].forEach.call(this._shadow.querySelectorAll('.star'), iterateOverStars, this);
+	            this._querySelectorAllStars(bindClicks);
 	
-	            function iterateOverStars(item, indx) {
-	                if (this.getAttribute('hover') === 'true') {
-	                    updateEventHandlers(this, item, 'mouseover', starHandler);
-	                }
+	            function bindClicks(item, indx) {
 	                updateEventHandlers(this, item, 'click', starHandler);
 	
 	                function starHandler(evt) {
 	                    evt.preventDefault();
-	                    this._setValue(indx + 1);
-	                    this._toggleStates(evt.target, indx);
-	                    this.dispatchEvent(this._ratingUpdatedEvent());
+	                    var selectedStars = this._root.querySelectorAll('.selected');
+	
+	                    if (selectedStars.length === indx + 1 && evt.target.classList.contains('selected')) {
+	                        this.reset();
+	                    } else {
+	                        this._toggleStates(indx);
+	                    }
 	                }
 	            }
 	
@@ -156,49 +200,79 @@
 	            }
 	        }
 	    }, {
-	        key: "_addStar",
-	        value: function _addStar() {
-	            this._shadow.innerHTML += '<div class="star"></div>';
+	        key: "_updateStar",
+	        value: function _updateStar(item, index) {
+	            return this._hasShadow() ? this._toggleStates(index) : item.setAttribute('style', StarRating._style(this._size(), this._src()[0]).star() + ";");
 	        }
 	    }, {
 	        key: "_toggleStates",
-	        value: function _toggleStates(star, index) {
-	            [].forEach.call(this._shadow.querySelectorAll('.star'), toggleStates, this);
+	        value: function _toggleStates(index) {
+	            var _srcs = this._src();
+	            var stars = this._querySelectorAllStars(toggleStates);
+	            var size = this._size();
+	            this.dispatchEvent(this._ratingUpdatedEvent());
 	
 	            function toggleStates(item, indx) {
-	                item.classList[indx <= index ? 'add' : 'remove']('star-selected');
+	                var isInRange = indx <= index;
+	                item.classList[isInRange ? 'add' : 'remove']('selected');
+	                this._setValue(index + 1);
+	                this._setStateFor(item, isInRange ? _srcs[0] : _srcs[1], size);
 	            }
 	        }
 	    }, {
-	        key: "_getPaths",
-	        value: function _getPaths() {
-	            var _paths = this.getAttribute('paths');
-	            return (0, _mixins2.default)(_paths) ? _paths.split(',') : ['data:image/svg+xml,%3Csvg%20fill%3D%22%23CCCCCC%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%20width%3D%2218%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M9%2011.3l3.71%202.7-1.42-4.36L15%207h-4.55L9%202.5%207.55%207H3l3.71%202.64L5.29%2014z%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h18v18H0z%22%20fill%3D%22none%22/%3E%0A%3C/svg%3E', 'data:image/svg+xml,%3Csvg%20fill%3D%22%23F1C40F%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%20width%3D%2218%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M9%2011.3l3.71%202.7-1.42-4.36L15%207h-4.55L9%202.5%207.55%207H3l3.71%202.64L5.29%2014z%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h18v18H0z%22%20fill%3D%22none%22/%3E%0A%3C/svg%3E'];
+	        key: "_src",
+	        value: function _src() {
+	            var _src = this.getAttribute('src');
+	            return (0, _helpers.exists)(_src) ? _src.split(/(\ *),{1}(\ *)/).filter(filterSrc) : StarRating._sources();
+	
+	            function filterSrc(item) {
+	                if (!/^(data).*(base64)$/.test(item) && item.trim() !== '') {
+	                    return item;
+	                }
+	            }
 	        }
 	    }, {
-	        key: "_getMaxValue",
-	        value: function _getMaxValue() {
+	        key: "_maxValue",
+	        value: function _maxValue() {
 	            var maxValue = parseInt(this.getAttribute('maxValue'), 10);
-	            return (0, _mixins2.default)(maxValue) && !isNaN(maxValue) ? maxValue : 5;
+	            return (0, _helpers.exists)(maxValue) && !isNaN(maxValue) ? maxValue : _vars.MAX_VALUE;
 	        }
 	    }, {
-	        key: "_getSize",
-	        value: function _getSize() {
+	        key: "_size",
+	        value: function _size() {
 	            var sizeAttr = this.getAttribute('size');
-	            return (0, _mixins2.default)(sizeAttr) ? sizeAttr : "36px";
+	            return (0, _helpers.exists)(sizeAttr) ? sizeAttr : _vars.SIZE;
 	        }
 	    }, {
 	        key: "_setValue",
 	        value: function _setValue(val) {
 	            this.setAttribute("value", val);
-	            this.value = val;
-	            return this.value;
+	            return this.value = val;
+	        }
+	    }, {
+	        key: "_hasShadow",
+	        value: function _hasShadow() {
+	            return "createShadowRoot" in this;
 	        }
 	    }], [{
-	        key: "_css",
-	        value: function _css(path, overPath, size) {
-	            console.log(path, overPath, size);
-	            return "<style>\n                    :host {\n                      display: flex;\n                      align-items: center;\n                      justify-content: center;\n                      width: 100%;\n                    }\n\n                    .star {\n                       width: " + size + ";\n                       height: " + size + ";\n                       background: rgba(255,255,255,0) url(" + path + ") no-repeat center center;\n                       background-size: cover;\n                    }\n\n                    .star-selected {\n                       background-image: url(" + overPath + ");\n                    }\n                </style>";
+	        key: "_sources",
+	        value: function _sources() {
+	            return [_vars.BASE_IMG_BKG, _vars.SELECTED_IMG_BKG];
+	        }
+	    }, {
+	        key: "_style",
+	        value: function _style(size, starImg) {
+	
+	            return {
+	                element: function element() {
+	                    return _vars.ELEMENT_STYLE;
+	                },
+	
+	                star: function star(starImg, size) {
+	                    return _vars.STAR_STYLE + ("height: " + size + ";width: " + size + ";background-image: url(" + starImg + ");");
+	                }
+	
+	            };
 	        }
 	    }]);
 	
@@ -208,25 +282,76 @@
 	document.registerElement("star-rating", StarRating);
 
 /***/ },
-/* 1 */
+/* 1 */,
+/* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = Vars;
+	function Vars() {
+	
+	  return {
+	    size: SIZE,
+	    maxValue: MAX_VALUE,
+	    icon: {
+	      base: BASE_IMG_BKG,
+	      selected: SELECTED_IMG_BKG
+	    },
+	    styles: {
+	      element: ELEMENT_STYLE,
+	      star: STAR_STYLE
+	    },
+	    templates: {
+	      css: elementTemplate,
+	      html: starTemplate
+	    }
+	
+	  };
+	}
+	
+	var SIZE = exports.SIZE = "36px";
+	var MAX_VALUE = exports.MAX_VALUE = 5;
+	var BASE_IMG_BKG = exports.BASE_IMG_BKG = 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQ0NDQ0NDIiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTggMTgiIHdpZHRoPSIxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik05IDExLjNsMy43MSAyLjctMS40Mi00LjM2TDE1IDdoLTQuNTVMOSAyLjUgNy41NSA3SDNsMy43MSAyLjY0TDUuMjkgMTR6Ii8+CiAgICA8cGF0aCBkPSJNMCAwaDE4djE4SDB6IiBmaWxsPSJub25lIi8+Cjwvc3ZnPg==';
+	var SELECTED_IMG_BKG = exports.SELECTED_IMG_BKG = 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRjFDNDBGIiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTggMTgiIHdpZHRoPSIxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik05IDExLjNsMy43MSAyLjctMS40Mi00LjM2TDE1IDdoLTQuNTVMOSAyLjUgNy41NSA3SDNsMy43MSAyLjY0TDUuMjkgMTR6Ii8+CiAgICA8cGF0aCBkPSJNMCAwaDE4djE4SDB6IiBmaWxsPSJub25lIi8+Cjwvc3ZnPg==';
+	var ELEMENT_STYLE = exports.ELEMENT_STYLE = 'display: flex;\n                                 display: -webkit-flex;\n                                 -webkit-align-items: center;\n                                 -ms-align-items: center;\n                                 -moz-align-items: center;\n                                 align-items: center;\n                                 -webkit-justify-content: center;\n                                 -ms-justify-content: center;\n                                 -moz-justify-content: center;\n                                 justify-content: center;\n                                 width: 100%;';
+	var STAR_STYLE = exports.STAR_STYLE = 'outline: 0;\n                                 cursor: pointer;\n                                 background-color: rgba(255,255,255,0);\n                                 background-repeat: no-repeat;\n                                 background-position: center center;\n                                 background-size: cover;';
+
+/***/ },
+/* 3 */
 /***/ function(module, exports) {
 
 	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
-	exports.getCSS = getCSS;
-	exports.default = exists;
-	function getCSS(path) {
-	    var link = document.createElement('link');
-	    link.href = path;
-	    link.rel = "stylesheet";
-	    document.head.appendChild(link);
+	exports.default = helpers;
+	exports.exists = exists;
+	exports.starTemplate = starTemplate;
+	exports.elementTemplate = elementTemplate;
+	function helpers() {
+	  return {
+	    exists: exists,
+	    starTemplate: starTemplate,
+	    elementTemplate: elementTemplate
+	  };
 	}
 	
 	function exists(testItem) {
-	    return typeof testItem !== "undefined" && testItem !== null;
+	  return typeof testItem !== "undefined" && testItem !== null;
+	}
+	
+	function starTemplate() {
+	  return '<div class="star"></div>';
+	}
+	
+	function elementTemplate(size, starImgs) {
+	
+	  return "<style>\n           :host {\n             display: flex;\n             -webkit-align-items: center;\n             -ms-align-items: center;\n             -moz-align-items: center;\n             align-items: center;\n             -webkit-justify-content: center;\n             -ms-justify-content: center;\n             -moz-justify-content: center;\n             justify-content: center;\n             width: 100%;\n           }\n\n           .star {\n              height: " + size + ";\n              width: " + size + ";\n              outline: 0;\n              cursor: pointer;\n              background: rgba(255,255,255,0) url(" + starImgs[0] + ") no-repeat center center;\n              background-size: cover;\n           }\n\n           .star.selected {\n             background-image: url(" + starImgs[1] + ");\n           }\n\n        </style>";
 	}
 
 /***/ }

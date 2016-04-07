@@ -1,30 +1,53 @@
-import exists from "./mixins";
+import { exists, elementTemplate, starTemplate} from "./helpers";
+import { SIZE, ELEMENT_STYLE, STAR_STYLE, SELECTED_IMG_BKG, BASE_IMG_BKG, MAX_VALUE } from "./vars";
 
 export class StarRating extends HTMLElement {
 
     createdCallback(){
-        this._shadow = this.createShadowRoot();
+        this._attrs = /(size|maxvalue|src)/i;
         Object.defineProperty(this, "value", { value: 0, writable: true });
     }
 
     attributeChangedCallback(name, oldVal, newVal) {
-        if(name === "size" || name === "maxvalue" || name === "hover" || name === "img-paths"){
+        if(this._attrs.test(name)){
             this._update();
+            this._toggleStates(newVal ||  0);
         }
     }
 
     attachedCallback() {
+        this._root = this._hasShadow() ? this.createShadowRoot() : this;
         this._update();
     }
 
     reset(){
-        [].forEach.call(this._shadow.querySelectorAll('.star'), removedSelectedState, this);
-
-        function removedSelectedState(item, indx){
-            item.classList.remove('star-selected');
+        if(this.value !== 0) {
+            this._setValue(0);
+            this._querySelectorAllStars(removedSelectedState);
+            this.dispatchEvent(this._ratingUpdatedEvent());
         }
-        this._setValue(0);
-        this.dispatchEvent(this._ratingUpdatedEvent());
+
+        function removedSelectedState(item){
+            item.classList.remove('selected');
+            this._setStateFor(item, this._src()[0], this._size());
+        }
+
+        return this;
+    }
+
+    rate(value){
+        this._setValue(value);
+        this._toggleStates(value);
+        return this;
+    }
+
+    _setStateFor(item, starImg, size){
+      if(!this._hasShadow()){
+        item.style.backgroundImage = `url(${starImg})`;
+        item.style.width = size;
+        item.style.height = size;
+      }
+      return item;
     }
 
     _update(){
@@ -32,13 +55,26 @@ export class StarRating extends HTMLElement {
         this._bindEvents();
     }
 
+        // TODO: Update this & relate style attr adjustments to use Shadow DOM &
+        // CSS Properties (doing this hack now to get browser support)
+
+    _renderStars(){
+      let starArr = [];
+      let maxValue = this._maxValue();
+      while(maxValue > 0){
+        starArr.push(maxValue);
+        maxValue--;
+      }
+      return starArr.map(starTemplate).join('');
+    }
+
     _render(){
-        var count = this._getMaxValue();
-        let _paths = this._getPaths();
-        this._shadow.innerHTML = StarRating._css(_paths[0], _paths[1], this._getSize());
-        while(count > 0){
-            this._addStar();
-            count--;
+        if(this._hasShadow()) {
+          // console.log(CSSTemplate(this._size(), this._src()) + this._renderStars());
+          this._root.innerHTML = elementTemplate(this._size(), this._src()) + this._renderStars();
+        } else{
+          this.setAttribute('style', StarRating._style(this._size(), this._src()).element());
+          this._root.innerHTML = this._renderStars();
         }
     }
 
@@ -46,25 +82,32 @@ export class StarRating extends HTMLElement {
         return new CustomEvent("ratingUpdated", {
             detail: {
                 value: this.value,
-                maxValue: this._getMaxValue()
+                maxValue: this._maxValue()
             }
         });
     }
 
-    _bindEvents(){
-        [].forEach.call(this._shadow.querySelectorAll('.star'), iterateOverStars, this);
+    _querySelectorAllStars(iterateFn){
+        let stars = this._root.querySelectorAll('.star');
+        [].forEach.call(stars, iterateFn, this);
+        return stars;
+    }
 
-        function iterateOverStars(item, indx){
-            if(this.getAttribute('hover') === 'true') {
-                updateEventHandlers(this, item, 'mouseover', starHandler);
-            }
+    _bindEvents(){
+        this._querySelectorAllStars(bindClicks);
+
+        function bindClicks(item, indx){
             updateEventHandlers(this, item, 'click', starHandler);
 
             function starHandler(evt){
                 evt.preventDefault();
-                this._setValue(indx + 1);
-                this._toggleStates(evt.target, indx);
-                this.dispatchEvent(this._ratingUpdatedEvent());
+                let selectedStars = this._root.querySelectorAll('.selected');
+
+                if(selectedStars.length === indx + 1 && evt.target.classList.contains('selected')){
+                    this.reset();
+                } else {
+                    this._toggleStates(indx);
+                }
             }
         }
 
@@ -75,61 +118,75 @@ export class StarRating extends HTMLElement {
 
     }
 
-    _addStar(){
-        this._shadow.innerHTML += '<div class="star"></div>';
+    _updateStar(item, index){
+        return this._hasShadow() ? this._toggleStates(index) : item.setAttribute('style', `${StarRating._style(this._size(), this._src()[0]).star()};`);
     }
 
-    _toggleStates(star, index){
-        [].forEach.call(this._shadow.querySelectorAll('.star'), toggleStates, this);
+    _toggleStates(index){
+        let _srcs = this._src();
+        let stars = this._querySelectorAllStars(toggleStates);
+        let size = this._size();
+        this.dispatchEvent(this._ratingUpdatedEvent());
 
         function toggleStates(item, indx){
-            item.classList[indx <= index ? 'add' : 'remove']('star-selected');
+            let isInRange = indx <= index;
+            item.classList[isInRange ? 'add' : 'remove']('selected');
+            this._setValue(index + 1);
+            this._setStateFor(item, (isInRange ? _srcs[0] : _srcs[1]), size);
         }
     }
 
-    _getPaths(){
-        let _paths = this.getAttribute('img-paths');
-        return exists(_paths) ? _paths.split(',')  : [ 'data:image/svg+xml,%3Csvg%20fill%3D%22%23CCCCCC%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%20width%3D%2218%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M9%2011.3l3.71%202.7-1.42-4.36L15%207h-4.55L9%202.5%207.55%207H3l3.71%202.64L5.29%2014z%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h18v18H0z%22%20fill%3D%22none%22/%3E%0A%3C/svg%3E', 'data:image/svg+xml,%3Csvg%20fill%3D%22%23F1C40F%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%20width%3D%2218%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M9%2011.3l3.71%202.7-1.42-4.36L15%207h-4.55L9%202.5%207.55%207H3l3.71%202.64L5.29%2014z%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h18v18H0z%22%20fill%3D%22none%22/%3E%0A%3C/svg%3E' ];
+    _src(){
+        let _src = this.getAttribute('src');
+        return exists(_src) ? _src.split(/(\ *),{1}(\ *)/).filter(filterSrc) : StarRating._sources();
+
+        function filterSrc(item){
+          if(!(/^(data).*(base64)$/.test(item)) && item.trim() !== ''){
+            return item;
+          }
+        }
     }
 
-    _getMaxValue(){
+    _maxValue(){
         let maxValue = parseInt(this.getAttribute('maxValue'), 10);
-        return exists(maxValue) && !isNaN(maxValue) ? maxValue : 5;
+        return exists(maxValue) && !isNaN(maxValue) ? maxValue : MAX_VALUE;
     }
 
-    _getSize() {
+    _size() {
         let sizeAttr = this.getAttribute('size');
-        return exists(sizeAttr) ? sizeAttr : "36px";
+        return exists(sizeAttr) ? sizeAttr : SIZE;
     }
 
     _setValue(val){
         this.setAttribute("value", val);
-        this.value = val;
-        return this.value;
+        return this.value = val;
     }
 
-    static _css(path, overPath, size){
-        console.log(path, overPath, size);
-        return `<style>
-                    :host {
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                      width: 100%;
-                    }
-
-                    .star {
-                       width: ${size};
-                       height: ${size};
-                       background: rgba(255,255,255,0) url(${path}) no-repeat center center;
-                       background-size: cover;
-                    }
-
-                    .star-selected {
-                       background-image: url(${overPath});
-                    }
-                </style>`;
+    _hasShadow(){
+        return "createShadowRoot" in this;
     }
+
+    static _sources(){
+      return [ BASE_IMG_BKG , SELECTED_IMG_BKG ];
+    }
+
+    static _style(size, starImg){
+
+        return {
+            element: function(){
+                return ELEMENT_STYLE;
+            },
+
+            star: function(starImg, size){
+                return  STAR_STYLE + `height: ${size};width: ${size};background-image: url(${starImg});`;
+            }
+
+        }
+
+    }
+
 }
+
+
 
 document.registerElement("star-rating", StarRating);

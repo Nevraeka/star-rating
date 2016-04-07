@@ -29,5 +29,5 @@ module.exports = {
         colors: true
     },
     // Create Sourcemaps for the bundle
-    devtool: 'source-map',
+    devtool: 'source-map'
 };

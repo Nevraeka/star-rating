@@ -1,6 +1,6 @@
 {
   "name": "basic-star-rating",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A Star ratings custom element",
   "scripts": {
     "watch": "webpack --watch"

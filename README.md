@@ -33,7 +33,7 @@ Example
 ### <star-rating> Demos
 
 ##### Changing the image src attribute
-[![changing the image src attribute]()](http://codepen.io/Nevraeka/pen/qZpryV/)
+[![changing the image src attribute](https://raw.githubusercontent.com/Nevraeka/star-rating/master/img/changing-the-image-source.png)](http://codepen.io/Nevraeka/pen/qZpryV/)
 
 ````html
 

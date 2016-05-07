@@ -53,7 +53,7 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _helpers = __webpack_require__(3);
+	var _helpers = __webpack_require__(1);
 	
 	var _vars = __webpack_require__(2);
 	
@@ -62,6 +62,22 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	/*
+	
+	 A vanilla web component that provides a number based rating value
+	
+	 ##### Examples
+	 <star-rating></star-rating>
+	 <star-rating maxvalue="10"></star-rating>
+	 <star-rating size="2em"></star-rating>
+	 <star-rating src="/path/to/default-image-state, /path/to/selected-image-state"></star-rating>
+	 @demo
+	 @element star-rating
+	 @homepage
+	 @author Erik Isaksen
+	
+	 */
 	
 	var StarRating = exports.StarRating = function (_HTMLElement) {
 	    _inherits(StarRating, _HTMLElement);
@@ -85,6 +101,11 @@
 	                this._update();
 	                this._toggleStates(newVal || 0);
 	            }
+	            if (name == 'value') {
+	                this.value = newVal;
+	            }
+	
+	            // this.addEventListener('keyup', this.applyKeyAccess.bind(this));
 	        }
 	    }, {
 	        key: "attachedCallback",
@@ -108,13 +129,13 @@
 	
 	            return this;
 	        }
-	    }, {
-	        key: "rate",
-	        value: function rate(value) {
-	            this._setValue(value);
-	            this._toggleStates(value);
-	            return this;
-	        }
+	        //
+	        // rate(value) {
+	        //     this._setValue(value);
+	        //     this._toggleStates(value);
+	        //     return this;
+	        // }
+	
 	    }, {
 	        key: "_setStateFor",
 	        value: function _setStateFor(item, starImg, size) {
@@ -128,8 +149,9 @@
 	    }, {
 	        key: "_update",
 	        value: function _update() {
+	
 	            this._render();
-	            this._bindEvents();
+	            this._applyDOMEvents();
 	        }
 	
 	        // TODO: Update this & relate style attr adjustments to use Shadow DOM &
@@ -140,6 +162,7 @@
 	        value: function _renderStars() {
 	            var starArr = [];
 	            var maxValue = this._maxValue();
+	
 	            while (maxValue > 0) {
 	                starArr.push(maxValue);
 	                maxValue--;
@@ -150,7 +173,6 @@
 	        key: "_render",
 	        value: function _render() {
 	            if (this._hasShadow()) {
-	                // console.log(CSSTemplate(this._size(), this._src()) + this._renderStars());
 	                this._root.innerHTML = (0, _helpers.elementTemplate)(this._size(), this._src()) + this._renderStars();
 	            } else {
 	                this.setAttribute('style', StarRating._style(this._size(), this._src()).element());
@@ -168,36 +190,50 @@
 	            });
 	        }
 	    }, {
-	        key: "_querySelectorAllStars",
-	        value: function _querySelectorAllStars(iterateFn) {
-	            var stars = this._root.querySelectorAll('.star');
-	            [].forEach.call(stars, iterateFn, this);
-	            return stars;
+	        key: "_selected",
+	        value: function _getSelected() {
+	            return this._root.querySelectorAll('.selected');
 	        }
 	    }, {
-	        key: "_bindEvents",
-	        value: function _bindEvents() {
-	            this._querySelectorAllStars(bindClicks);
-	
-	            function bindClicks(item, indx) {
-	                updateEventHandlers(this, item, 'click', starHandler);
-	
-	                function starHandler(evt) {
-	                    evt.preventDefault();
-	                    var selectedStars = this._root.querySelectorAll('.selected');
-	
-	                    if (selectedStars.length === indx + 1 && evt.target.classList.contains('selected')) {
-	                        this.reset();
-	                    } else {
-	                        this._toggleStates(indx);
-	                    }
-	                }
+	        key: "_all",
+	        value: function _getAll() {
+	            return this._root.querySelectorAll('.star');
+	        }
+	    }, {
+	        key: "_allAnd",
+	        value: function _applyToEach(iterateFn) {
+	            [].forEach.call(this._all(), iterateFn, this);
+	        }
+	    }, {
+	        key: "_indexPlusOneEqualsCurrentValue",
+	        value: function _targetElementIndexPlusOneIsCurrentValue(target, indx) {
+	            return this._selected().length === indx + 1 && target.classList.contains('selected');
+	        }
+	    }, {
+	        key: "_starHandler",
+	        value: function _starClickHandler(evt) {
+	            evt.preventDefault();
+	            if (this._indexPlusOneEqualsCurrentValue(evt.target, indx)) {
+	                this.reset();
+	            } else {
+	                this._toggleStates(indx);
 	            }
-	
-	            function updateEventHandlers(starRating, element, evt, handler) {
-	                element.removeEventListener(evt, handler.bind(starRating));
-	                element.addEventListener(evt, handler.bind(starRating));
-	            }
+	        }
+	    }, {
+	        key: "_applyDOMEvents",
+	        value: function _bindClickEvents(item, indx) {
+	            this._updateEventHandlers(this, item, 'click', this._starHandler);
+	        }
+	    }, {
+	        key: "_updateEventHandlers",
+	        value: function _updateEventHandlers(starRating, element, evt, handler) {
+	            element.removeEventListener(evt, handler.bind(starRating));
+	            element.addEventListener(evt, handler.bind(starRating));
+	        }
+	    }, {
+	        key: "_applyEvents",
+	        value: function _applyEvents() {
+	            this._allAnd(this._applyDOMEvents);
 	        }
 	    }, {
 	        key: "_updateStar",
@@ -208,8 +244,9 @@
 	        key: "_toggleStates",
 	        value: function _toggleStates(index) {
 	            var _srcs = this._src();
-	            var stars = this._querySelectorAllStars(toggleStates);
 	            var size = this._size();
+	
+	            this._querySelectorAllStars(toggleStates);
 	            this.dispatchEvent(this._ratingUpdatedEvent());
 	
 	            function toggleStates(item, indx) {
@@ -233,8 +270,8 @@
 	        }
 	    }, {
 	        key: "_maxValue",
-	        value: function _maxValue() {
-	            var maxValue = parseInt(this.getAttribute('maxValue'), 10);
+	        value: function _maxValue(val) {
+	            var maxValue = parseInt(val ? val : this.getAttribute('maxvalue'), 10);
 	            return (0, _helpers.exists)(maxValue) && !isNaN(maxValue) ? maxValue : _vars.MAX_VALUE;
 	        }
 	    }, {
@@ -282,7 +319,40 @@
 	document.registerElement("star-rating", StarRating);
 
 /***/ },
-/* 1 */,
+/* 1 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = helpers;
+	exports.exists = exists;
+	exports.starTemplate = starTemplate;
+	exports.elementTemplate = elementTemplate;
+	function helpers() {
+	  return {
+	    exists: exists,
+	    starTemplate: starTemplate,
+	    elementTemplate: elementTemplate
+	  };
+	}
+	
+	function exists(testItem) {
+	  return typeof testItem !== "undefined" && testItem !== null;
+	}
+	
+	function starTemplate() {
+	  return '<div class="star"></div>';
+	}
+	
+	function elementTemplate(size, starImgs) {
+	
+	  return "<style>\n           :host {\n             display: flex;\n             -webkit-align-items: center;\n             -ms-align-items: center;\n             -moz-align-items: center;\n             align-items: center;\n             -webkit-justify-content: center;\n             -ms-justify-content: center;\n             -moz-justify-content: center;\n             justify-content: center;\n             width: 100%;\n             outline-width: 1px;\n           }\n\n           .star {\n              height: " + size + ";\n              width: " + size + ";\n              outline: 0;\n              cursor: pointer;\n              background: rgba(255,255,255,0) url(" + starImgs[0] + ") no-repeat center center;\n              background-size: cover;\n           }\n\n           .star.selected {\n             background-image: url(" + starImgs[1] + ");\n           }\n\n        </style>";
+	}
+
+/***/ },
 /* 2 */
 /***/ function(module, exports) {
 
@@ -319,40 +389,6 @@
 	var SELECTED_IMG_BKG = exports.SELECTED_IMG_BKG = 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRjFDNDBGIiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTggMTgiIHdpZHRoPSIxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik05IDExLjNsMy43MSAyLjctMS40Mi00LjM2TDE1IDdoLTQuNTVMOSAyLjUgNy41NSA3SDNsMy43MSAyLjY0TDUuMjkgMTR6Ii8+CiAgICA8cGF0aCBkPSJNMCAwaDE4djE4SDB6IiBmaWxsPSJub25lIi8+Cjwvc3ZnPg==';
 	var ELEMENT_STYLE = exports.ELEMENT_STYLE = 'display: flex;\n                                 display: -webkit-flex;\n                                 -webkit-align-items: center;\n                                 -ms-align-items: center;\n                                 -moz-align-items: center;\n                                 align-items: center;\n                                 -webkit-justify-content: center;\n                                 -ms-justify-content: center;\n                                 -moz-justify-content: center;\n                                 justify-content: center;\n                                 width: 100%;';
 	var STAR_STYLE = exports.STAR_STYLE = 'outline: 0;\n                                 cursor: pointer;\n                                 background-color: rgba(255,255,255,0);\n                                 background-repeat: no-repeat;\n                                 background-position: center center;\n                                 background-size: cover;';
-
-/***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = helpers;
-	exports.exists = exists;
-	exports.starTemplate = starTemplate;
-	exports.elementTemplate = elementTemplate;
-	function helpers() {
-	  return {
-	    exists: exists,
-	    starTemplate: starTemplate,
-	    elementTemplate: elementTemplate
-	  };
-	}
-	
-	function exists(testItem) {
-	  return typeof testItem !== "undefined" && testItem !== null;
-	}
-	
-	function starTemplate() {
-	  return '<div class="star"></div>';
-	}
-	
-	function elementTemplate(size, starImgs) {
-	
-	  return "<style>\n           :host {\n             display: flex;\n             -webkit-align-items: center;\n             -ms-align-items: center;\n             -moz-align-items: center;\n             align-items: center;\n             -webkit-justify-content: center;\n             -ms-justify-content: center;\n             -moz-justify-content: center;\n             justify-content: center;\n             width: 100%;\n           }\n\n           .star {\n              height: " + size + ";\n              width: " + size + ";\n              outline: 0;\n              cursor: pointer;\n              background: rgba(255,255,255,0) url(" + starImgs[0] + ") no-repeat center center;\n              background-size: cover;\n           }\n\n           .star.selected {\n             background-image: url(" + starImgs[1] + ");\n           }\n\n        </style>";
-	}
 
 /***/ }
 /******/ ]);

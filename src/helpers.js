@@ -1,7 +1,7 @@
 export default function helpers(){
   return {
-    exists: exists,
-    starTemplate: starTemplate,
+    exists:          exists,
+    starTemplate:    starTemplate,
     elementTemplate: elementTemplate
   };
 }
@@ -11,7 +11,7 @@ export function exists(testItem) {
 }
 
 export function starTemplate(){
-  return '<div class="star"></div>';
+  return '<div tabindex="0" class="star"></div>';
 }
 
 export function elementTemplate(size, starImgs){
@@ -28,6 +28,7 @@ export function elementTemplate(size, starImgs){
              -moz-justify-content: center;
              justify-content: center;
              width: 100%;
+             outline-width: 1px;
            }
 
            .star {

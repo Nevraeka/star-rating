@@ -4,15 +4,15 @@ export default function Vars(){
       size: SIZE,
       maxValue: MAX_VALUE,
       icon: {
-        base: BASE_IMG_BKG,
+        base:     BASE_IMG_BKG,
         selected: SELECTED_IMG_BKG
       },
       styles: {
         element: ELEMENT_STYLE,
-        star: STAR_STYLE
+        star:    STAR_STYLE
       },
-      templates: {
-        css: elementTemplate,
+      templates : {
+        css:  elementTemplate,
         html: starTemplate
       }
 

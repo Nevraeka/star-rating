@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Star Rating Demo</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,300italic,300,700,700italic,600italic,600'
+          rel='stylesheet' type='text/css'>
+    <link href="demo.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.21/webcomponents.min.js"></script>
+    <script src="../star-rating.js"></script>
+</head>
+<body>
+<main>
+    <section>
+        <h2>Examples</h2>
+
+        <div class="example">
+            <div>
+                <h3>Default Values</h3>
+                <p>This example uses default values</p>
+            </div>
+            <div>
+                <star-rating></star-rating>
+            </div>
+        </div>
+        <hr>
+        <div class="example">
+            <div>
+                <h3>Using a Keyboard</h3>
+                <p>
+                    First give the element focus by adding a <code>tabindex="0"</code> to your &lt;star-rating&gt;
+                    element. On
+                    focus, you can use the left & right arrow keys to increase & decrease the value
+                </p>
+            </div>
+            <div>
+                <star-rating id="focus-example" maxvalue="5" tabindex="0"></star-rating>
+                <div class="example_actions">
+                    <button id="focus-trigger" type="button" class="example_button">Set Focus</button>
+                    <button id="focus-reset" type="button" class="example_button">Reset</button>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="example">
+            <div>
+                <h3>Changing Custom Images</h3>
+                <p>
+                    Changing the <code>src</code> attribute will update the rating icon images.
+                    This attribute requires two URL's that are comma separated in a single string value.
+                    Click or tap on the update button below to
+                    change the <code>src</code> attribute from the default value to a value
+                    of <code>"https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/US-O7_insignia.svg/2000px-US-O7_insignia.svg.png,
+                    http://www.elm.org/wp-content/uploads/2014/05/gold-star.jpg"
+                </code>. Click or tap the reset button to reset the example back to the default
+                    <code>src</code> value.
+                </p>
+            </div>
+            <div>
+                <star-rating id="custom-event"></star-rating>
+                <div class="example_actions">
+                    <button id="custom-event-trigger" type="button" class="example_button">Update</button>
+                    <button id="custom-event-reset" type="button" class="example_button">Reset</button>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="example">
+            <div>
+                <h3>Updating the rating maximum value</h3>
+                <p>
+                    Changing the <code>maxvalue</code> attribute will update the total amount
+                    of rating icons. This attribute is the maximum potential rating value a
+                    <code>&lt;star-rating&gt;</code>. Click or tap on the update button below to
+                    change the <code>maxvalue</code> attribute from the default value to a value
+                    of 10. Click or tap the reset button to reset the example back to the default
+                    <code>maxvalue</code> value.
+                </p>
+            </div>
+            <div>
+                <star-rating id="maxvalue-example"></star-rating>
+                <div class="example_actions">
+                    <button id="maxvalue-trigger" type="button" class="example_button">Update</button>
+                    <button id="maxvalue-reset" type="button" class="example_button">Reset</button>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="example">
+            <div>
+                <h3>Updating the image size</h3>
+                <p>
+                    Changing the <code>size</code> attribute will update the total amount
+                    of rating icons. This attribute is the maximum potential rating value a
+                    <code>&lt;star-rating&gt;</code>. Click or tap on the update button below to
+                    change the <code>maxvalue</code> attribute from the default value to a value
+                    of 10. Click or tap the reset button to reset the example back to the default
+                    <code>maxvalue</code> value.
+                </p>
+            </div>
+            <div>
+                <star-rating id="size-example"></star-rating>
+                <div class="example_actions">
+
+                    <button id="size-trigger" type="button" class="example_button">Update</button>
+                    <button id="size-reset" type="button" class="example_button">Reset</button>
+                </div>
+            </div>
+        </div>
+        <hr>
+    </section>
+
+    <section>
+        <h2>Events</h2>
+        <div class="example">
+            <div>
+                <h3>ratingUpdated</h3>
+                <p><code>'ratingUpdated'</code> is a DOM Custom Event that fires whenever the value of the <code>&lt;star-rating&gt;</code>
+                    is updated. This event passes a JavaScript object with two key/value pairs that are accessible on
+                    the
+                    <code>'event.detail'</code> object. Test this example out by selecting a <code>
+                        &lt;star-rating&gt;</code>
+                    star to update it's current rating.
+                </p>
+                <h3 class="event-subheader">Event Detail</h3>
+                <p class="definition-row">
+                    <code class="definition-name">maxvalue</code>
+                    <strong>this is the current 'maxvalue' attribute value at the time the event fires</strong>
+                </p>
+                <p class="definition-row">
+                    <code class="definition-name">value</code>
+                    <strong>this is the current value property/attribute value at the time the event fires</strong>
+                </p>
+            </div>
+            <div>
+                <star-rating id="event-example"></star-rating>
+                <div class="event-section-divider">
+                    <div class="example_actions">
+                        <label for="event-input">change maxvalue to </label>
+                        <input type="text" id="event-input" />
+                    </div>
+                    <div class="example_actions">
+                        <button id="event-trigger" type="button" class="example_button">Update</button>
+                        <button id="event-reset" type="button" class="example_button">Reset</button>
+                    </div>
+                </div>
+
+                <p class="event-detail-values">The <code>'ratingUpdated'</code> event has fired with:</p>
+                <p class="event-detail-values"><code>Event.detail.maxvalue</code> of <code
+                        id="event-detail-maxvalue">5</code></p>
+                <p class="event-detail-values"><code>Event.detail.value</code> of <code id="event-detail-value">0</code>
+                </p>
+            </div>
+        </div>
+
+    </section>
+    <!--<section>-->
+        <!--<h2>Methods</h2>-->
+        <!--<h3>reset</h3>-->
+        <!--<p>this method resets the value of the &lt;star-rating&gt; element to 0 and triggers the ratingUpdated-->
+            <!--event.</p>-->
+        <!--<h4>Usage</h4>-->
+    <!--</section>-->
+    <section>
+        <h2>Attributes</h2>
+        <section class="section-block">
+            <div class="definition-row align-center">
+                <h4 class="definition-name">
+                    <code>value</code>
+                </h4>
+                <p>
+                    the <code>value</code> attribute is the total rating. It is the current number of stars that are
+                    selected
+                    for that element. It is mapped directly to the <code>&lt;star-rating&gt;</code> <code>value</code>
+                    property &amp; and is meant to be an 'read only' attribute.
+                </p>
+            </div>
+            <div class="definition">
+                <p class="definition-row">
+                    <span class="definition-name">required: </span>
+                    <code>n/a (read-only)</code>
+                </p>
+
+                <p class="definition-row">
+                    <span class="definition-name">expected output: </span>
+                    <code>integer</code>
+                </p>
+                <p class="definition-row">
+                    <span class="definition-name">default value: </span>
+                    <code>0</code>
+                </p>
+            </div>
+        </section>
+
+        <section class="section-block">
+            <div class="definition-row align-center">
+                <h4 class="definition-name">
+                    <code>src</code>
+                </h4>
+                <p>
+                    This attribute consists of two urls that are comma separated in a single string value. These two
+                    image
+                    paths get added as a <code>background-image</code> url in the css.
+                </p>
+            </div>
+            <div class="definition">
+                <p class="definition-row">
+                    <span class="definition-name">required: </span>
+                    <code>no</code>
+                </p>
+                <p class="definition-row">
+
+                    <span class="definition-name">expected value: </span>
+                    <code>String</code>
+                </p>
+                <p class="definition-row">
+                    <span class="definition-name">default value: </span>
+                    <code>Embedded datauri SVG</code>
+                </p>
+            </div>
+        </section>
+
+        <section class="section-block">
+            <div class="definition-row align-center">
+                <h4 class="definition-name">
+                    <code>maxvalue</code>
+                </h4>
+                <p>
+                    <code>maxvalue</code> is the total number of stars you wish to display.
+                </p>
+            </div>
+            <div class="definition">
+                <p class="definition-row">
+                    <span class="definition-name">required: </span>
+                    <code>no</code>
+                </p>
+                <p class="definition-row">
+                    <span class="definition-name">expected value: </span>
+                    <code>integer</code>
+                </p>
+                <p class="definition-row">
+                    <span class="definition-name">default value: </span>
+                    <code>5</code>
+                </p>
+            </div>
+        </section>
+        <section class="section-block">
+            <div class="definition-row align-center">
+                <h4 class="definition-name">
+                    <code>size</code>
+                </h4>
+                <p>
+                    <code>size</code> defines the height & width values in css recognized units for each individual
+                    star.
+                </p>
+            </div>
+
+            <div class="definition">
+                <p class="definition-row">
+                    <span class="definition-name">required: </span>
+                    <code>no</code>
+                </p>
+                <p class="definition-row">
+                    <span class="definition-name">expected value: </span>
+                    <code>css unit string</code>
+                </p>
+                <p class="definition-row">
+                    <span class="definition-name">default value: </span>
+                    <code>36px</code>
+                </p>
+            </div>
+        </section>
+
+    </section>
+    <section>
+        <h2>Properties</h2>
+        <div class="definition">
+            <p class="definition-row">
+                    <span class="definition-name">
+                        <code>value</code>
+                    </span>
+            </p>
+            <p class="definition-row">
+                <span class="definition-name">value type: </span>
+                <code>number</code>
+            </p>
+            </div>
+        <h5>Usage</h5>
+        <p>
+            the <code>value</code> property represents the number of stars currently selected. 'Value' directly maps to
+            the value attribute (see description in the attributes section).
+        </p>
+    </section>
+
+
+</main>
+<script src="examples.js"></script>
+</body>
+</html>

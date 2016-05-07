@@ -1,4 +1,6 @@
-// taken from https://github.com/rauschma/webpack-es6-demo/blob/master/webpack.config.js
+/* base configuration taken from @rauchma
+ * https://github.com/rauschma/webpack-es6-demo/blob/master/webpack.config.js
+ */
 
 var path = require('path');
 var webpack = require('webpack');
@@ -15,7 +17,7 @@ module.exports = {
                 loader: 'babel-loader',
                 test: path.join(__dirname, 'src'),
                 query: {
-                    presets: 'es2015',
+                    presets: 'es2015'
                 },
             }
         ]

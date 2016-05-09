@@ -29,5 +29,16 @@
     "path": "^0.12.7",
     "webpack": "^1.12.14"
   },
-  "main": "star-rating.js"
+  "main": "star-rating.js",
+  "jspm": {
+    "name": "basic-star-rating",
+    "main": "star-rating.js",
+    "directories": {
+      "lib": "src"
+    },
+    "dependencies": {},
+    "devDependencies": {
+      "plugin-babel": "npm:systemjs-plugin-babel@^0.0.10"
+    }
+  }
 }

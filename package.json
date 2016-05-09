@@ -3,6 +3,7 @@
   "version": "2.0.1",
   "description": "A Star ratings custom element",
   "scripts": {
+    "demo" : "webpack --build && cp star-rating.js demo/star-rating.js && serve ./demo",
     "watch": "webpack --watch"
   },
   "keywords": [

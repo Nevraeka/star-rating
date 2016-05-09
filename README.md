@@ -14,10 +14,6 @@ star-rating element is built with ES6/ES2015 modules. If you want to use the sou
 ##### ES5 & HTML Imports
 Since we are not using Bower for front end management & NPM typically does not save packages to the root of our generated web component it is recommended that you use module loaders for this element. That said, you can use the star-rating HTML page as a HTML
 
-### Usage
------
-
-
 Browser Support
 ---------------
 
@@ -27,9 +23,7 @@ Browser Support
 
 Requirements
 ------------
-
-Development
------------
+- `webcomponents.js` polyfill
 
 API
 ===

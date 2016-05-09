@@ -53,12 +53,14 @@ export class StarRating extends HTMLElement {
 
         return this;
     }
-    //
-    // rate(value) {
-    //     this._setValue(value);
-    //     this._toggleStates(value);
-    //     return this;
-    // }
+
+    rateAs(value) {
+        const max = this._maxValue();
+        let _value =  value <= 1 ? 0 : value >= max ? max - 1 : value -1;
+        this._setValue(_value);
+        this._toggleStates(_value);
+        return this;
+    }
 
     _setStateFor(item, starImg, size) {
         if (!this._hasShadow()) {
@@ -70,9 +72,8 @@ export class StarRating extends HTMLElement {
     }
 
     _update() {
-
         this._render();
-        this._applyDOMEvents();
+        this._applyEvents();
     }
 
     // TODO: Update this & relate style attr adjustments to use Shadow DOM &
@@ -99,7 +100,7 @@ export class StarRating extends HTMLElement {
     }
 
     _ratingUpdatedEvent() {
-        return const ratingEvent = new CustomEvent("ratingUpdated", {
+        return new CustomEvent("ratingUpdated", {
             detail: {
                 value: this.value,
                 maxValue: this._maxValue()
@@ -111,30 +112,28 @@ export class StarRating extends HTMLElement {
        return this._root.querySelectorAll('.selected');
     }
 
-    _all(){
-       return this._root.querySelectorAll('.star');
-    }
-
     _allAnd(iterateFn) {
-        return [].forEach.call(this._all(), iterateFn, this);
+        return [].forEach.call(this._root.querySelectorAll('.star'), iterateFn, this);
     }
 
     _indexPlusOneEqualsCurrentValue(target, indx){
         return this._selected().length === indx + 1 && target.classList.contains('selected');
     }
 
-    _starHandler(evt) {
-        evt.preventDefault();
-        if (this._indexPlusOneEqualsCurrentValue(evt.target, indx)) {
-            this.reset();
-        } else {
-            this._toggleStates(indx);
-        }
-    }
 
-    _applyDOMEvents(item) {
-        item.removeEventListener('click', this._starHandler.bind(this));
-        item.addEventListener('click', this._starHandler.bind(this));
+
+    _applyDOMEvents(item, indx) {
+          item.removeEventListener('click', starHandler.bind(this));
+          item.addEventListener('click', starHandler.bind(this));
+
+          function starHandler(evt) {
+              evt.preventDefault();
+              if (this._indexPlusOneEqualsCurrentValue(evt.target, indx)) {
+                  this.reset();
+              } else {
+                  this._toggleStates(indx);
+              }
+          }
     }
 
     _applyEvents() {
@@ -149,7 +148,7 @@ export class StarRating extends HTMLElement {
         let _srcs = this._src();
         let size = this._size();
 
-        this._querySelectorAllStars(toggleStates);
+        this._allAnd(toggleStates);
         this.dispatchEvent(this._ratingUpdatedEvent());
 
         function toggleStates(item, indx) {

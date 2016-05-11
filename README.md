@@ -1,36 +1,45 @@
-star-rating
-===========
+star-rating [![NPM version][npm-image]][npm-url]
+================================================
 
 ### Installing
-##### To install via NPM
-```
-npm i basic-star-rating
+##### To install via [NPM](https://npmjs.org)
+```shell
+$ npm i basic-star-rating
 ```
 
-### Loading
+### Requirements
+- [`webcomponents.js` polyfill](https://github.com/webcomponents/webcomponentsjs))
+Use NPM to install all dependencies
+```shell
+$ npm install
+```
+Add webcomponentsjs polyfills to your website with local dependencies using loaders or script tags. If you prefer you can use a CDN as well. Keep in mind that this polyfill will need to load BEFORE other related assets so it is preferrabvle to add it in the head of the document and as close to the opening of the head tag as possible.
+```html
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.21/webcomponents.min.js"></script>
+```
+
 ##### ES6, Babel, & WebPack
-star-rating element is built with ES6/ES2015 modules. If you want to use the source files, you may need to transpile code down and use a module loader like Babel or SystemJS. With browser support being in the state it is with regards to ES6 modules, you will need to load the source code with a module loader like Babel. There are many ways to do this but here is what is suggested using Babel...
+star-rating element is built with ES6/ES2015 modules. You may use the either thee source files or the transpiled es5 file. When using the ES6/ES2015 source files, you will most likely need to use a module loader like Babel with Webpack or SystemJS.
 
-##### ES5 & HTML Imports
-Since we are not using Bower for front end management & NPM typically does not save packages to the root of our generated web component it is recommended that you use module loaders for this element. That said, you can use the star-rating HTML page as a HTML
+### Usage
+It is recommended that you use module loaders for this element. That said, you can alternatively use the star-rating as an HTML Import (See Web Components Standards for more details) or load it through bower if that is your workflow.
 
-Browser Support
+When you want to use star-rating simply add it to your markup
+````html
+<star-rating maxvalue="5"></star-rating>
+````
+
+### Browser Support*
 ---------------
-
 | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/chrome/chrome_64x64.png" width="48px" height="48px" alt="Chrome logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/edge/edge_64x64.png" width="48px" height="48px" alt="Edge logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/firefox/firefox_64x64.png" width="48px" height="48px" alt="Firefox logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/internet-explorer/internet-explorer_64x64.png" width="48px" height="48px" alt="Internet Explorer logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/opera/opera_64x64.png" width="48px" height="48px" alt="Opera logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/safari/safari_64x64.png" width="48px" height="48px" alt="Safari logo"> |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | Latest ✔ | Latest ✔ | Latest ✔ | IE 10+ ✔ | Latest ✔ | Latest ✔ |
+*Includes both Mobile & Desktop versions with `webcomponents.js` polyfill. Note that IE10 will have flaky behavior for Custom Elements & HTML Imports
 
-Requirements
-------------
-- `webcomponents.js` polyfill
+### API
 
-API
-===
-
-Attributes
-----------
-
+##### Attributes
+---
 | Attribute Name | Required   | Type    | Example                                               | Comments                                                                                |
 | -------------- | ---------- | ------- | ------------------------------------------------------| ----------------------------------------------------------------------------------------------- |
 | maxvalue       |   **No**   | integer | 5                                                     | maxvalue is the total number of stars you wish to display.                              |
@@ -39,18 +48,37 @@ Attributes
 | size           |   **No**   | string  | 36px                                                  | size defines the height & width values in css units for each individual star            |
 | value (RO)     |   **N/A**  | integer | 3                                                     | a read-only attribute that exposes the current rating value                             |
 
-Example
-=======
+##### Events
+---
+| name           | data detail                | description    |
+| --------------- | ------------------------- | -------------- |
+| **ratingUpdated**   | `event.detail.maxValue`   | `ratingUpdated` is a DOM Custom Event that fires whenever the value of the the `star-rating` element is updated. |
+|                 | default: `5`, type: `number`|                          |                |
+
+##### Methods
+---
+| name | description | usage |
+| ---- | ----------- | ----- |
+| **rateAs** | 'rateAs' sets a given value to the star-rating by passing in an integer value between 1 and the maxValue attribute | `document.querySelector('star-rating').rateAs(3)` |
+| **reset** | 'reset' sets the value property to zero and resets the star-rating to its original state | `document.querySelector('star-rating').reset()` |
+### Development
+Use an existing application server to load the demos and set the root to the folder. Then you can navigate with your browser to the localhost & port. If you want a quick and easy server user `serve`. Serve uses port 3000 by default.
+##### Download serve (optional)
+```shell
+$ npm i serve -g
+```
+###### Running the server (using serve)
+```shell
+$ serve ./demo
+```
+navigate in your browser to `localhost:3000`
+
+API examples are on the demo page.
+
 ### <star-rating> Demos
 
 ##### Changing the image src attribute
 [![changing the image src attribute](https://raw.githubusercontent.com/Nevraeka/star-rating/master/img/changing-the-image-source.png)](http://codepen.io/Nevraeka/pen/qZpryV/)
-
-````html
-
-<star-rating maxvalue="5"></star-rating>
-
-````
 
 Contributing
 ============

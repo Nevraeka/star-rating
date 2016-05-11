@@ -1,4 +1,4 @@
-star-rating [![NPM version][npm-image]][npm-url]
+star-rating [![npm version](https://badge.fury.io/js/basic-star-rating.svg)](https://badge.fury.io/js/basic-star-rating)
 ================================================
 
 ### Installing

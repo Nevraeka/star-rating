@@ -8,7 +8,7 @@ $ npm i basic-star-rating
 ```
 
 ### Requirements
-- [`webcomponents.js` polyfill](https://github.com/webcomponents/webcomponentsjs))
+- ['webcomponents.js' polyfill](https://github.com/webcomponents/webcomponentsjs))
 Use NPM to install all dependencies
 ```shell
 $ npm install

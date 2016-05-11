@@ -54,7 +54,9 @@ When you want to use star-rating simply add it to your markup
 | name           | data detail                | description    |
 | --------------- | ------------------------- | -------------- |
 | **ratingUpdated**   | `event.detail.maxValue`   | `ratingUpdated` is a DOM Custom Event that fires whenever the value of the the `star-rating` element is updated. |
-|                 | default: `5`, type: `number`|                          |                |
+| | default: `5`, type: `number`| | |
+| | `event.detail.value`        | | |
+| | default: `0`, type: `number`| | |
 
 ##### Methods
 ---

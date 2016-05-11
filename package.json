@@ -1,6 +1,6 @@
 {
   "name": "basic-star-rating",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A Star ratings custom element",
   "scripts": {
     "demo": "webpack --build && cp star-rating.js demo/star-rating.js && serve ./demo",

@@ -59,9 +59,7 @@ When you want to use star-rating simply add it to your markup
 ---
 ##### **`ratingUpdated`**
 
----
-
-**ratingUpdated** is a DOM Custom Event that fires whenever the value of the the `star-rating` element is updated.
+**ratingUpdated** is a DOM Custom Event that fires whenever the value of the > the `star-rating` element is updated.
 
 | event detail | default value | type |
 | --- |:---:|:---:|
@@ -70,7 +68,7 @@ When you want to use star-rating simply add it to your markup
 
 ##### Usage Example
 Add an event listener as seen below. When you tap or click on a star, the console should output the correct state information of that element.
-  
+
 ```javascript
     document.querySelector('star-rating').addEventListener('ratingUpdated', function(evt){
         // do something with the event information `evt.detail`

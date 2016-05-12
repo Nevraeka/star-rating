@@ -14,13 +14,13 @@ Use NPM to install all dependencies
 ```shell
 $ npm install
 ```
-Add webcomponentsjs polyfills to your website with local dependencies using loaders or script tags. If you prefer you can use a CDN as well. Keep in mind that this polyfill will need to load BEFORE other related assets so it is preferrabvle to add it in the head of the document and as close to the opening of the head tag as possible.
+Add webcomponentsjs polyfills to your website with local dependencies using loaders or script tags. If you prefer you can use a CDN as well. Keep in mind that this polyfill will need to load BEFORE other related assets so it is preferrable to add it in the head of the document and as close to the opening of the head tag as possible.
 ```html
 <script async src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.21/webcomponents.min.js"></script>
 ```
 
 ##### ES6, Babel, & WebPack
-star-rating element is built with ES6/ES2015 modules. You may use the either thee source files or the transpiled es5 file. When using the ES6/ES2015 source files, you will most likely need to use a module loader like Babel with Webpack or SystemJS.
+star-rating element is built with ES6/ES2015 modules. You may use the either the source files or the transpiled es5 file. When using the ES6/ES2015 source files, you will **most likely need** to use a module loader like Babel with Webpack or SystemJS.
 
 ### Usage
 It is recommended that you use module loaders for this element. That said, you can alternatively use the star-rating as an HTML Import (See Web Components Standards for more details) or load it through bower if that is your workflow.
@@ -44,19 +44,9 @@ When you want to use star-rating simply add it to your markup
 | Attribute Name | Required   | Type    | Example                                               | Comments                                                                                |
 | -------------- | ---------- | ------- | ------------------------------------------------------| ----------------------------------------------------------------------------------------------- |
 | maxvalue       |   **No**   | integer | 5                                                     | maxvalue is the total number of stars you wish to display.                              |
-| src            |   **No**   | string  | "/images/my-star.png, /images/my-star-selected.png"   | This attribute is a string consisting of two urls that are comma separated in a single  |
-|                |            |         |                                                       | string value. These two image paths get added as 'background-image' url's in the css    |
+| src            |   **No**   | string  | "/images/my-star.png, /images/my-star-selected.png"   | This attribute is a string consisting of two urls that are comma separated in a single string value. These two image paths get added as 'background-image' url's in the css |
 | size           |   **No**   | string  | 36px                                                  | size defines the height & width values in css units for each individual star            |
 | value (RO)     |   **N/A**  | integer | 3                                                     | a read-only attribute that exposes the current rating value                             |
-
-##### Events
----
-| name           | data detail                | description    |
-| --------------- | ------------------------- | -------------- |
-| **ratingUpdated**   | `event.detail.maxValue`   | `ratingUpdated` is a DOM Custom Event that fires whenever the value of the the `star-rating` element is updated. |
-| | default: `5`, type: `number`| | |
-| | `event.detail.value`        | | |
-| | default: `0`, type: `number`| | |
 
 ##### Methods
 ---
@@ -64,19 +54,34 @@ When you want to use star-rating simply add it to your markup
 | ---- | ----------- | ----- |
 | **rateAs** | 'rateAs' sets a given value to the star-rating by passing in an integer value between 1 and the maxValue attribute | `document.querySelector('star-rating').rateAs(3)` |
 | **reset** | 'reset' sets the value property to zero and resets the star-rating to its original state | `document.querySelector('star-rating').reset()` |
+
+##### Events
+---
+#### **`ratingUpdated`**
+
+---
+| name | description |
+| --- | --- |
+| **`ratingUpdated`**   | `ratingUpdated` is a DOM Custom Event that fires whenever the value of the the `star-rating` element is updated. |
+
+---
+| detail | default value | type |
+| --- |:---:|:---:|
+| `event.detail.maxValue` | `5` | `number` |
+| `event.detail.value` | `0` | `number` |
+
 ### Development
 Use an existing application server to load the demos and set the root to the folder. Then you can navigate with your browser to the localhost & port. If you want a quick and easy server user `serve`. Serve uses port 3000 by default.
-##### Download serve (optional)
+
+##### Download webpack & serve (optional)
 ```shell
-$ npm i serve -g
+$ npm i serve webpack -g
 ```
 ###### Running the server (using serve)
 ```shell
 $ serve ./demo
 ```
-navigate in your browser to `localhost:3000`
-
-API examples are on the demo page.
+To view the demo in the browser using the serve module, navigate in your browser to `localhost:3000` after running the above command. Most API examples are testable on the demo page.
 
 ### <star-rating> Demos
 

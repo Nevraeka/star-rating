@@ -106,7 +106,7 @@ To view the demo in the browser using the serve module, navigate in your browser
 ##### Changing the image src attribute
 [![changing the image src attribute](https://raw.githubusercontent.com/Nevraeka/star-rating/master/img/changing-the-image-source.png)](http://codepen.io/Nevraeka/pen/qZpryV/)
 
-Contributing
-============
+### Contributing
+---
 
 To contribute to this project all you will need is NPM installed and a love of web components. Please submit any suggestions or changes with a pull request (when possible). Here is the [Code of Conduct](https://github.com/Nevraeka/star-rating/blob/master/code-of-conduct.md) for contributions

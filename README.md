@@ -55,7 +55,7 @@ When you want to use star-rating simply add it to your markup
 | **rateAs** | 'rateAs' sets a given value to the star-rating by passing in an integer value between 1 and the maxValue attribute | `document.querySelector('star-rating').rateAs(3)` |
 | **reset** | 'reset' sets the value property to zero and resets the star-rating to its original state | `document.querySelector('star-rating').reset()` |
 
-##### Events
+### Events
 ---
 ##### **`ratingUpdated`**
 
@@ -67,6 +67,16 @@ When you want to use star-rating simply add it to your markup
 | --- |:---:|:---:|
 | `event.detail.maxValue` | `5` | `number` |
 | `event.detail.value` | `0` | `number` |
+
+##### Usage Example
+Add an event listener as seen below. When you tap or click on a star, the console should output the correct state information of that element.
+  
+```javascript
+    document.querySelector('star-rating').addEventListener('ratingUpdated', function(evt){
+        // do something with the event information `evt.detail`
+        console.log(evt.detail.maxValue, evt.detail.value);
+    });
+```
 
 ### Development
 Use an existing application server to load the demos and set the root to the folder. Then you can navigate with your browser to the localhost & port. If you want a quick and easy server user `serve`. Serve uses port 3000 by default.

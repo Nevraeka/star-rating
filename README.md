@@ -57,11 +57,11 @@ When you want to use star-rating simply add it to your markup
 
 ##### Events
 ---
-#### **`ratingUpdated`**
+##### **`ratingUpdated`**
 
 ---
-`ratingUpdated` is a DOM Custom Event that fires whenever the value of the the `star-rating` element is updated.
----
+
+**ratingUpdated** is a DOM Custom Event that fires whenever the value of the the `star-rating` element is updated.
 | event detail key | default value | type |
 | --- |:---:|:---:|
 | `event.detail.maxValue` | `5` | `number` |

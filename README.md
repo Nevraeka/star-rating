@@ -94,11 +94,14 @@ Use an existing application server to load the demos and set the root to the fol
 ```shell
 $ npm i serve webpack -g
 ```
-###### Running the server (using serve)
+###### Running the server locally (using `serve`)
 ```shell
-$ serve ./demo
+$ npm run demo
 ```
+
 To view the demo in the browser using the serve module, navigate in your browser to `localhost:3000` after running the above command. Most API examples are testable on the demo page.
+
+Online examples are on the the project [github pages](http://nevraeka.github.io/star-rating/)
 
 ### <star-rating> Demos
 ---

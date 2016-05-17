@@ -30,8 +30,6 @@ export class StarRating extends HTMLElement {
         if(name == 'value'){
             this.value = newVal;
         }
-
-        // this.addEventListener('keyup', this.applyKeyAccess.bind(this));
     }
 
     attachedCallback() {
@@ -55,11 +53,26 @@ export class StarRating extends HTMLElement {
     }
 
     rateAs(value) {
+        if(!exists(value) || typeof value !== 'number'){ return this; }
         const max = this._maxValue();
-        let _value =  value <= 1 ? 0 : value >= max ? max - 1 : value -1;
-        this._setValue(_value);
-        this._toggleStates(_value);
+        this._toggleStates((value < 1 ? 0 : value > max ? max : value) -1);
         return this;
+    }
+
+    _keyboard(evt){
+          const val = this.value;
+          if(this === document.activeElement){
+            let code = (evt.which || evt.keyCode);
+            if(code == 37 || code == 39){
+                if(code === 37){
+                    this.rateAs(val - 1);
+                }
+                if(code === 39){
+                    this.rateAs(val + 1);
+                }
+            }
+        }
+
     }
 
     _setStateFor(item, starImg, size) {
@@ -137,6 +150,8 @@ export class StarRating extends HTMLElement {
     }
 
     _applyEvents() {
+        this.removeEventListener('keyup', this._keyboard.bind(this));
+        this.addEventListener('keyup', this._keyboard.bind(this));
         this._allAnd(this._applyDOMEvents);
     }
 

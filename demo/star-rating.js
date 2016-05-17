@@ -103,8 +103,6 @@
 	            if (name == 'value') {
 	                this.value = newVal;
 	            }
-	
-	            // this.addEventListener('keyup', this.applyKeyAccess.bind(this));
 	        }
 	    }, {
 	        key: "attachedCallback",
@@ -131,11 +129,28 @@
 	    }, {
 	        key: "rateAs",
 	        value: function rateAs(value) {
+	            if (!(0, _helpers.exists)(value) || typeof value !== 'number') {
+	                return this;
+	            }
 	            var max = this._maxValue();
-	            var _value = value <= 1 ? 0 : value >= max ? max - 1 : value - 1;
-	            this._setValue(_value);
-	            this._toggleStates(_value);
+	            this._toggleStates((value < 1 ? 0 : value > max ? max : value) - 1);
 	            return this;
+	        }
+	    }, {
+	        key: "_keyboard",
+	        value: function _keyboard(evt) {
+	            var val = this.value;
+	            if (this === document.activeElement) {
+	                var code = evt.which || evt.keyCode;
+	                if (code == 37 || code == 39) {
+	                    if (code === 37) {
+	                        this.rateAs(val - 1);
+	                    }
+	                    if (code === 39) {
+	                        this.rateAs(val + 1);
+	                    }
+	                }
+	            }
 	        }
 	    }, {
 	        key: "_setStateFor",
@@ -222,6 +237,8 @@
 	    }, {
 	        key: "_applyEvents",
 	        value: function _applyEvents() {
+	            this.removeEventListener('keyup', this._keyboard.bind(this));
+	            this.addEventListener('keyup', this._keyboard.bind(this));
 	            this._allAnd(this._applyDOMEvents);
 	        }
 	    }, {

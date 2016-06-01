@@ -1,6 +1,6 @@
 {
   "name": "basic-star-rating",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "A Star ratings custom element",
   "scripts": {
     "demo": "webpack --build && serve .",

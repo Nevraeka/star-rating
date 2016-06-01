@@ -128,8 +128,8 @@ var RatingUpdatedEventExample = (function(window,document){
 
     function update(evt){
         evt.preventDefault();
-        const val = document.getElementById('event-input').value;
-        const maxVal = val.replace(/\s+/, '') != "" ? val : 5;
+        var val = document.getElementById('event-input').value;
+        var maxVal = val.replace(/\s+/, '') != "" ? val : 5;
         document.querySelector('#event-example').setAttribute('maxvalue', maxVal);
     }
 

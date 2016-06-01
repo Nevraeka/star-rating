@@ -32,6 +32,7 @@ export function elementTemplate(size, starImgs){
            }
 
            .star {
+             display: inline-block;
               height: ${size};
               width: ${size};
               outline: 0;

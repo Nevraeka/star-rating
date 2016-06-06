@@ -365,8 +365,7 @@
 	      selected: SELECTED_IMG_BKG
 	    },
 	    styles: {
-	      element: ELEMENT_STYLE,
-	      star: STAR_STYLE
+	      element: ELEMENT_STYLE
 	    },
 	    templates: {
 	      css: elementTemplate,
@@ -381,7 +380,6 @@
 	var BASE_IMG_BKG = exports.BASE_IMG_BKG = 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQ0NDQ0NDIiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTggMTgiIHdpZHRoPSIxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik05IDExLjNsMy43MSAyLjctMS40Mi00LjM2TDE1IDdoLTQuNTVMOSAyLjUgNy41NSA3SDNsMy43MSAyLjY0TDUuMjkgMTR6Ii8+CiAgICA8cGF0aCBkPSJNMCAwaDE4djE4SDB6IiBmaWxsPSJub25lIi8+Cjwvc3ZnPg==';
 	var SELECTED_IMG_BKG = exports.SELECTED_IMG_BKG = 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRjFDNDBGIiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTggMTgiIHdpZHRoPSIxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik05IDExLjNsMy43MSAyLjctMS40Mi00LjM2TDE1IDdoLTQuNTVMOSAyLjUgNy41NSA3SDNsMy43MSAyLjY0TDUuMjkgMTR6Ii8+CiAgICA8cGF0aCBkPSJNMCAwaDE4djE4SDB6IiBmaWxsPSJub25lIi8+Cjwvc3ZnPg==';
 	var ELEMENT_STYLE = exports.ELEMENT_STYLE = 'display: flex;\n                                 display: -webkit-flex;\n                                 -webkit-align-items: center;\n                                 -ms-align-items: center;\n                                 -moz-align-items: center;\n                                 align-items: center;\n                                 -webkit-justify-content: center;\n                                 -ms-justify-content: center;\n                                 -moz-justify-content: center;\n                                 justify-content: center;\n                                 width: 100%;';
-	var STAR_STYLE = exports.STAR_STYLE = 'outline: 0;\n                                 cursor: pointer;\n                                 background-color: rgba(255,255,255,0);\n                                 background-repeat: no-repeat;\n                                 background-position: center center;\n                                 background-size: cover;';
 
 /***/ }
 /******/ ]);

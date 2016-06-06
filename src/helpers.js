@@ -15,7 +15,6 @@ export function starTemplate(){
 }
 
 export function elementTemplate(size, starImgs){
-
   return `<style>
            :host {
              display: flex;

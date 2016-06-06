@@ -130,10 +130,9 @@ export class StarRating extends HTMLElement {
     }
 
     _indexPlusOneEqualsCurrentValue(target, indx){
-        return this._selected().length === indx + 1 && target.classList.contains('selected');
+        return this._selected().length === indx + 1
+                   && target.classList.contains('selected');
     }
-
-
 
     _applyDOMEvents(item, indx) {
           item.removeEventListener('click', starHandler.bind(this));

@@ -89,7 +89,6 @@ var SizeExample = (function(window,document){
     function init(){
         document.querySelector('#size-trigger').addEventListener('click', sizeUpdate);
         document.querySelector('#size-reset').addEventListener('click', reset);
-
     }
 
     function sizeUpdate(evt){
@@ -121,7 +120,6 @@ var RatingUpdatedEventExample = (function(window,document){
 
     function ratingUpdated(evt){
         evt.preventDefault();
-        debugger;
         document.getElementById('event-detail-value').innerHTML = evt.detail.value;
         document.getElementById('event-detail-maxvalue').innerHTML = evt.detail.maxValue;
     }

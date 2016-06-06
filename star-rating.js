@@ -98,10 +98,11 @@
 	        value: function attributeChangedCallback(name, oldVal, newVal) {
 	            if (this._attrs.test(name)) {
 	                this._update();
-	                this._toggleStates(newVal || 0);
-	            }
-	            if (name == 'value') {
-	                this.value = newVal;
+	                if (newVal === parseInt(newVal, 10)) {
+	                    this._toggleStates(newVal);
+	                } else {
+	                    this.reset();
+	                }
 	            }
 	        }
 	    }, {
@@ -113,11 +114,9 @@
 	    }, {
 	        key: "reset",
 	        value: function reset() {
-	            if (this.value !== 0) {
-	                this._setValue(0);
-	                this._allAnd(removedSelectedState);
-	                this.dispatchEvent(this._ratingUpdatedEvent());
-	            }
+	            this._setValue(0);
+	            this._allAnd(removedSelectedState.bind(this));
+	            this.dispatchEvent(this._ratingUpdatedEvent());
 	
 	            function removedSelectedState(item) {
 	                item.classList.remove('selected');
@@ -139,27 +138,25 @@
 	    }, {
 	        key: "_keyboard",
 	        value: function _keyboard(evt) {
-	            var val = this.value;
-	            if (this === document.activeElement) {
-	                var code = evt.which || evt.keyCode;
-	                if (code == 37 || code == 39) {
-	                    if (code === 37) {
-	                        this.rateAs(val - 1);
-	                    }
-	                    if (code === 39) {
-	                        this.rateAs(val + 1);
-	                    }
+	            var rating = this;
+	            var value = rating.value;
+	            var code = evt.which || evt.keyCode;
+	
+	            if (code == 37 || code == 39) {
+	                if (code == 37) {
+	                    rating.rateAs(value - 1);
+	                }
+	                if (code == 39) {
+	                    rating.rateAs(value + 1);
 	                }
 	            }
 	        }
 	    }, {
 	        key: "_setStateFor",
 	        value: function _setStateFor(item, starImg, size) {
-	            if (!this._hasShadow()) {
-	                item.style.backgroundImage = "url(" + starImg + ")";
-	                item.style.width = size;
-	                item.style.height = size;
-	            }
+	            item.style.backgroundImage = "url(" + starImg + ")";
+	            item.style.width = size;
+	            item.style.height = size;
 	            return item;
 	        }
 	    }, {
@@ -187,12 +184,7 @@
 	    }, {
 	        key: "_render",
 	        value: function _render() {
-	            if (this._hasShadow()) {
-	                this._root.innerHTML = (0, _helpers.elementTemplate)(this._size(), this._src()) + this._renderStars();
-	            } else {
-	                this.setAttribute('style', StarRating._style(this._size(), this._src()).element());
-	                this._root.innerHTML = this._renderStars();
-	            }
+	            this._root.innerHTML = (0, _helpers.elementTemplate)(this._size(), this._src()) + this._renderStars();
 	        }
 	    }, {
 	        key: "_ratingUpdatedEvent",
@@ -237,8 +229,8 @@
 	    }, {
 	        key: "_applyEvents",
 	        value: function _applyEvents() {
-	            this.removeEventListener('keyup', this._keyboard.bind(this));
-	            this.addEventListener('keyup', this._keyboard.bind(this));
+	            this.removeEventListener('keyup', this._keyboard);
+	            this.addEventListener('keyup', this._keyboard);
 	            this._allAnd(this._applyDOMEvents);
 	        }
 	    }, {
@@ -257,9 +249,11 @@
 	
 	            function toggleStates(item, indx) {
 	                var isInRange = indx <= index;
+	                if (indx == index) {
+	                    this._setValue(indx + 1);
+	                }
 	                item.classList[isInRange ? 'add' : 'remove']('selected');
-	                this._setValue(index + 1);
-	                this._setStateFor(item, isInRange ? _srcs[0] : _srcs[1], size);
+	                this._setStateFor(item, isInRange ? _srcs[1] : _srcs[0], size);
 	            }
 	        }
 	    }, {
@@ -289,7 +283,6 @@
 	    }, {
 	        key: "_setValue",
 	        value: function _setValue(val) {
-	            this.setAttribute("value", val);
 	            return this.value = val;
 	        }
 	    }, {
@@ -309,12 +302,7 @@
 	            return {
 	                element: function element() {
 	                    return _vars.ELEMENT_STYLE;
-	                },
-	
-	                star: function star(starImg, size) {
-	                    return _vars.STAR_STYLE + ("height: " + size + ";width: " + size + ";background-image: url(" + starImg + ");");
 	                }
-	
 	            };
 	        }
 	    }]);
@@ -354,7 +342,6 @@
 	}
 	
 	function elementTemplate(size, starImgs) {
-	
 	  return "<style>\n           :host {\n             display: flex;\n             -webkit-align-items: center;\n             -ms-align-items: center;\n             -moz-align-items: center;\n             align-items: center;\n             -webkit-justify-content: center;\n             -ms-justify-content: center;\n             -moz-justify-content: center;\n             justify-content: center;\n             width: 100%;\n             outline-width: 1px;\n           }\n\n           .star {\n             display: inline-block;\n              height: " + size + ";\n              width: " + size + ";\n              outline: 0;\n              cursor: pointer;\n              background: rgba(255,255,255,0) url(" + starImgs[0] + ") no-repeat center center;\n              background-size: cover;\n           }\n\n           .star.selected {\n             background-image: url(" + starImgs[1] + ");\n           }\n\n        </style>";
 	}
 

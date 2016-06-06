@@ -19,16 +19,17 @@ export class StarRating extends HTMLElement {
 
     createdCallback() {
         this._attrs = /(size|maxvalue|src)/i;
-        Object.defineProperty(this, "value", { value: 0, writable: true});
+        Object.defineProperty(this, "value", { value: 0, writable: true });
     }
 
     attributeChangedCallback(name, oldVal, newVal) {
         if (this._attrs.test(name)) {
             this._update();
-            this._toggleStates(newVal || 0);
-        }
-        if(name == 'value'){
-            this.value = newVal;
+            if(newVal === parseInt(newVal, 10)){
+                this._toggleStates(newVal);
+            } else {
+                this.reset();
+            }
         }
     }
 
@@ -38,11 +39,9 @@ export class StarRating extends HTMLElement {
     }
 
     reset() {
-        if (this.value !== 0) {
-            this._setValue(0);
-            this._allAnd(removedSelectedState);
-            this.dispatchEvent(this._ratingUpdatedEvent());
-        }
+        this._setValue(0);
+        this._allAnd(removedSelectedState.bind(this));
+        this.dispatchEvent(this._ratingUpdatedEvent());
 
         function removedSelectedState(item) {
             item.classList.remove('selected');
@@ -60,27 +59,21 @@ export class StarRating extends HTMLElement {
     }
 
     _keyboard(evt){
-          const val = this.value;
-          if(this === document.activeElement){
-            let code = (evt.which || evt.keyCode);
-            if(code == 37 || code == 39){
-                if(code === 37){
-                    this.rateAs(val - 1);
-                }
-                if(code === 39){
-                    this.rateAs(val + 1);
-                }
-            }
+        let rating = this;
+        let value  = rating.value;
+        let code   = (evt.which || evt.keyCode);
+
+        if(code == 37 || code == 39){
+            if(code == 37){ rating.rateAs(value - 1); }
+            if(code == 39){ rating.rateAs(value + 1); }
         }
 
     }
 
     _setStateFor(item, starImg, size) {
-        if (!this._hasShadow()) {
-            item.style.backgroundImage = `url(${starImg})`;
-            item.style.width = size;
-            item.style.height = size;
-        }
+        item.style.backgroundImage = `url(${starImg})`;
+        item.style.width = size;
+        item.style.height = size;
         return item;
     }
 
@@ -104,12 +97,7 @@ export class StarRating extends HTMLElement {
     }
 
     _render() {
-        if (this._hasShadow()) {
-            this._root.innerHTML = elementTemplate(this._size(), this._src()) + this._renderStars();
-        } else {
-            this.setAttribute('style', StarRating._style(this._size(), this._src()).element());
-            this._root.innerHTML = this._renderStars();
-        }
+        this._root.innerHTML = elementTemplate(this._size(), this._src()) + this._renderStars();
     }
 
     _ratingUpdatedEvent() {
@@ -149,8 +137,8 @@ export class StarRating extends HTMLElement {
     }
 
     _applyEvents() {
-        this.removeEventListener('keyup', this._keyboard.bind(this));
-        this.addEventListener('keyup', this._keyboard.bind(this));
+        this.removeEventListener('keyup', this._keyboard);
+        this.addEventListener('keyup', this._keyboard);
         this._allAnd(this._applyDOMEvents);
     }
 
@@ -167,9 +155,11 @@ export class StarRating extends HTMLElement {
 
         function toggleStates(item, indx) {
             let isInRange = indx <= index;
+            if(indx == index){
+                this._setValue(indx + 1);
+            }
             item.classList[isInRange ? 'add' : 'remove']('selected');
-            this._setValue(index + 1);
-            this._setStateFor(item, (isInRange ? _srcs[0] : _srcs[1]), size);
+            this._setStateFor(item, (isInRange ? _srcs[1] : _srcs[0]), size);
         }
     }
 
@@ -195,7 +185,6 @@ export class StarRating extends HTMLElement {
     }
 
     _setValue(val) {
-        this.setAttribute("value", val);
         return this.value = val;
     }
 
@@ -212,12 +201,7 @@ export class StarRating extends HTMLElement {
         return {
             element: function () {
                 return ELEMENT_STYLE;
-            },
-
-            star: function (starImg, size) {
-                return STAR_STYLE + `height: ${size};width: ${size};background-image: url(${starImg});`;
             }
-
         }
 
     }

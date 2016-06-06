@@ -8,8 +8,7 @@ export default function Vars(){
         selected: SELECTED_IMG_BKG
       },
       styles: {
-        element: ELEMENT_STYLE,
-        star:    STAR_STYLE
+        element: ELEMENT_STYLE
       },
       templates : {
         css:  elementTemplate,
@@ -34,9 +33,3 @@ export const ELEMENT_STYLE    = `display: flex;
                                  -moz-justify-content: center;
                                  justify-content: center;
                                  width: 100%;`;
-export const STAR_STYLE       = `outline: 0;
-                                 cursor: pointer;
-                                 background-color: rgba(255,255,255,0);
-                                 background-repeat: no-repeat;
-                                 background-position: center center;
-                                 background-size: cover;`
